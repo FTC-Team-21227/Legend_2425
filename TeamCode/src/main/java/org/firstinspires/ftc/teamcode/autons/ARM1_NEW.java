@@ -25,6 +25,13 @@ public class ARM1_NEW {
     double f1 = TunePID.f1;
     //ticks to degrees conversion, very useful
     private final double ticks_in_degree_1 = 537.7*28/360; // = 41.8211111111
+    private final double L1 = 0;
+    private final double L2 = 0;
+    private final double x1 = 0;
+    private final double x2 = 0;
+    private final double m1 = 0;
+    private final double m2 = 0;
+    private static double target1;
 
     public ARM1_NEW(HardwareMap hardwareMap) {
         arm1 = hardwareMap.get(DcMotor.class, "ARM1");
@@ -34,20 +41,29 @@ public class ARM1_NEW {
         arm1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         controller1 = new PIDController(p1, i1, d1);
     }
+    public void setTarget1(double t1){
+        target1 = t1;
+    }
+    public static double getTarget1(){
+        return target1;
+    }
     public void ARM_Control_PID(double target1){
+        double target2 = ARM2_NEW.getTarget2();
         int arm1Pos = arm1.getCurrentPosition();
         double pid1 = controller1.calculate(arm1Pos,(int)(target1*ticks_in_degree_1)); //PID calculation
-        double ff1 = Math.cos(Math.toRadians(target1)) * f1; // feedforward calculation, change when equation is derived
-        double power1 = (pid1 + ff1)/1.5;
+        double ff1 = (m1*Math.cos(Math.toRadians(target1))*x1 +
+        m2*Math.cos(Math.atan(((x2*Math.sin(Math.toRadians(target1+target2)))+(L1*Math.sin(Math.toRadians(Math.toRadians(target1)))))/((L1*Math.cos(Math.toRadians(target1)))+(x2*Math.cos(Math.toRadians(target1+target2))))))*
+        Math.sqrt(Math.pow((x2*Math.sin(Math.toRadians(target1+target2))+L1*Math.sin(Math.toRadians(target1))),2)+Math.pow((x2*Math.cos(Math.toRadians(target1+target2))+L1*Math.cos(Math.toRadians(target1))),2))) * f1; // feedforward calculation, change when equation is derived
+        double power1 = (pid1+ff1)/1.5;
         arm1.setPower(power1); //set the power
     }
     //action names and values need to be updated.
     public class LiftHighBasket implements Action {
-        double target1 = 97.854286777;
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
+            target1 = 97.854286777;
             ARM_Control_PID(target1);
-            if (Math.abs(arm1.getCurrentPosition()-(int)(target1*ticks_in_degree_1)) > 15) {
+            if (Math.abs(arm1.getCurrentPosition()-(int)(target1*ticks_in_degree_1)) > 30) {
                 return true;
             } else {
                 arm1.setPower(0);
@@ -58,11 +74,11 @@ public class ARM1_NEW {
     public Action liftHighBasket() {return new LiftHighBasket();}
 
     public class LiftHookSpecimen implements Action {
-        double target1 = 50;
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
+            target1 = 50;
             ARM_Control_PID(target1);
-            if (Math.abs(arm1.getCurrentPosition()-(int)(target1*ticks_in_degree_1)) > 15) {
+            if (Math.abs(arm1.getCurrentPosition()-(int)(target1*ticks_in_degree_1)) > 30) {
                 return true;
             } else {
                 arm1.setPower(0);
@@ -74,11 +90,11 @@ public class ARM1_NEW {
         return new LiftHookSpecimen();
     }
     public class LiftRung implements Action {
-        double target1 = 36.8354632163;
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
+            target1 = 36.8354632163;
             ARM_Control_PID(target1);
-            if (Math.abs(arm1.getCurrentPosition()-(int)(target1*ticks_in_degree_1)) > 15) {
+            if (Math.abs(arm1.getCurrentPosition()-(int)(target1*ticks_in_degree_1)) > 30) {
                 return true;
             } else {
                 arm1.setPower(0);
@@ -90,11 +106,11 @@ public class ARM1_NEW {
         return new LiftRung();
     }
     public class LiftWall implements Action {
-        double target1 = 12.0513;
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
+            target1 = 12.0513;
             ARM_Control_PID(target1);
-            if (Math.abs(arm1.getCurrentPosition()-(int)(target1*ticks_in_degree_1)) > 15) {
+            if (Math.abs(arm1.getCurrentPosition()-(int)(target1*ticks_in_degree_1)) > 30) {
                 return true;
             } else {
                 arm1.setPower(0);
@@ -108,11 +124,11 @@ public class ARM1_NEW {
 
 
     public class LiftLowBasket implements Action {
-        double target1 = 50;
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
+            target1 = 50;
             ARM_Control_PID(target1);
-            if (Math.abs(arm1.getCurrentPosition()-(int)(target1*ticks_in_degree_1)) > 15) {
+            if (Math.abs(arm1.getCurrentPosition()-(int)(target1*ticks_in_degree_1)) > 30) {
                 return true;
             } else {
                 arm1.setPower(0);
@@ -122,11 +138,11 @@ public class ARM1_NEW {
     }
     public Action liftLowBasket() {return new LiftLowBasket();}
     public class LiftFloor implements Action {
-        double target1 = 2.6303;
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
+            target1 = 2.6303;
             ARM_Control_PID(target1);
-            if (Math.abs(arm1.getCurrentPosition()-(int)(target1*ticks_in_degree_1)) > 15) {
+            if (Math.abs(arm1.getCurrentPosition()-(int)(target1*ticks_in_degree_1)) > 30) {
                 return true;
             } else {
                 arm1.setPower(0);
@@ -136,11 +152,11 @@ public class ARM1_NEW {
     }
     public Action liftFloor() {return new LiftFloor();}
     public class LiftDown implements Action {
-        double target1 = 4.48338159887;
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
+            target1 = 4.48338159887;
             ARM_Control_PID(target1);
-            if (Math.abs(arm1.getCurrentPosition()-(int)(target1*ticks_in_degree_1)) > 15) {
+            if (Math.abs(arm1.getCurrentPosition()-(int)(target1*ticks_in_degree_1)) > 30) {
                 return true;
             } else {
                 arm1.setPower(0);

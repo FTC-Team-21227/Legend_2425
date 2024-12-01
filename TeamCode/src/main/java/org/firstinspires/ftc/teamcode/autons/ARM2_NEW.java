@@ -21,7 +21,16 @@ public class ARM2_NEW {
     double f2 = TunePID.f2;
     //ticks to degrees conversion, very useful
     private final double ticks_in_degree_2 = 145.1*28/360; // = 11.2855555556
-
+    private final double L1 = 0;
+    private final double L2 = 0;
+    private final double x1 = 0;
+    private final double x2 = 0;
+    private final double m1 = 0;
+    private final double m2 = 0;
+    private static double target2;
+    public static double getTarget2(){
+        return target2;
+    }
     public ARM2_NEW(HardwareMap hardwareMap) {
         arm2 = hardwareMap.get(DcMotor.class, "ARM2");
         arm2.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -31,19 +40,20 @@ public class ARM2_NEW {
         controller2 = new PIDController(p2, i2, d2);
     }
     public void ARM_Control_PID(double target2){
+        double target1 = ARM1_NEW.getTarget1();
         int arm2Pos = arm2.getCurrentPosition();
         double pid2 = controller2.calculate(arm2Pos,(int)(target2*ticks_in_degree_2)); //PID calculation
-        double ff2 = Math.cos(Math.toRadians(target2)) * f2; // feedforward calculation, change when equation is derived
+        double ff2 = (m2*Math.cos(Math.toRadians(target1+target2))*x2) * f2; //feedforward calculation, change when equation is derived
         double power2 = (pid2 + ff2)/1.5;
         arm2.setPower(power2); //set the power
     }
     //action names and values need to be updated.
     public class LiftRung implements Action {
-        double target2 = 158.644092101;
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
+            target2 = 158.644092101;
             ARM_Control_PID(target2);
-            if (Math.abs(arm2.getCurrentPosition()-(int)(target2*ticks_in_degree_2)) > 15) {
+            if (Math.abs(arm2.getCurrentPosition()-(int)(target2*ticks_in_degree_2)) > 30) {
                 return true;
             } else {
                 arm2.setPower(0);
@@ -55,11 +65,11 @@ public class ARM2_NEW {
         return new LiftRung();
     }
     public class LiftLowBasket implements Action {
-        double target2 = 50;
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
+            target2 = 50;
             ARM_Control_PID(target2);
-            if (Math.abs(arm2.getCurrentPosition()-(int)(target2*ticks_in_degree_2)) > 15) {
+            if (Math.abs(arm2.getCurrentPosition()-(int)(target2*ticks_in_degree_2)) > 30) {
                 return true;
             } else {
                 arm2.setPower(0);
@@ -70,11 +80,11 @@ public class ARM2_NEW {
     public Action liftLowBasket() {return new LiftLowBasket();}
 
     public class LiftWall implements Action {
-        double target2 = 155.7743;
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
+            target2 = 155.7743;
             ARM_Control_PID(target2);
-            if (Math.abs(arm2.getCurrentPosition()-(int)(target2*ticks_in_degree_2)) > 15) {
+            if (Math.abs(arm2.getCurrentPosition()-(int)(target2*ticks_in_degree_2)) > 30) {
                 return true;
             } else {
                 arm2.setPower(0);
@@ -102,11 +112,11 @@ public class ARM2_NEW {
 //        return new HookSpecimen();
 //    }
     public class LiftFloor implements Action {
-        double target2 = 163.6641;
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
+            target2 = 163.6641;
             ARM_Control_PID(target2);
-            if (Math.abs(arm2.getCurrentPosition()-(int)(target2*ticks_in_degree_2)) > 15) {
+            if (Math.abs(arm2.getCurrentPosition()-(int)(target2*ticks_in_degree_2)) > 30) {
                 return true;
             } else {
                 arm2.setPower(0);
@@ -119,11 +129,11 @@ public class ARM2_NEW {
     }
 
     public class LiftDown implements Action {
-        double target2 = 5.0199819357;
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
+            target2 = 5.0199819357;
             ARM_Control_PID(target2);
-            if (Math.abs(arm2.getCurrentPosition()-(int)(target2*ticks_in_degree_2)) > 15) {
+            if (Math.abs(arm2.getCurrentPosition()-(int)(target2*ticks_in_degree_2)) > 30) {
                 return true;
             } else {
                 arm2.setPower(0);
@@ -135,11 +145,11 @@ public class ARM2_NEW {
         return new LiftDown();
     }
     public class LiftHighBasket implements Action {
-        double target2 = 180.492048747;
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
+            target2 = 180.492048747;
             ARM_Control_PID(target2);
-            if (Math.abs(arm2.getCurrentPosition()-(int)(target2*ticks_in_degree_2)) > 15) {
+            if (Math.abs(arm2.getCurrentPosition()-(int)(target2*ticks_in_degree_2)) > 30) {
                 return true;
             } else {
                 arm2.setPower(0);
