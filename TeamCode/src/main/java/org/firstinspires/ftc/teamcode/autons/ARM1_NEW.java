@@ -41,9 +41,6 @@ public class ARM1_NEW {
         arm1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         controller1 = new PIDController(p1, i1, d1);
     }
-    public void setTarget1(double t1){
-        target1 = t1;
-    }
     public static double getTarget1(){
         return target1;
     }
@@ -59,11 +56,12 @@ public class ARM1_NEW {
     }
     //action names and values need to be updated.
     public class LiftHighBasket implements Action {
+        ElapsedTime time = new ElapsedTime();
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
             target1 = 97.854286777;
             ARM_Control_PID(target1);
-            if (Math.abs(arm1.getCurrentPosition()-(int)(target1*ticks_in_degree_1)) > 30) {
+            if (Math.abs(arm1.getCurrentPosition()-(int)(target1*ticks_in_degree_1)) > 30 && time.seconds() < 2) {
                 return true;
             } else {
                 arm1.setPower(0);
@@ -74,11 +72,12 @@ public class ARM1_NEW {
     public Action liftHighBasket() {return new LiftHighBasket();}
 
     public class LiftHookSpecimen implements Action {
+        ElapsedTime time = new ElapsedTime();
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
             target1 = 50;
             ARM_Control_PID(target1);
-            if (Math.abs(arm1.getCurrentPosition()-(int)(target1*ticks_in_degree_1)) > 30) {
+            if (Math.abs(arm1.getCurrentPosition()-(int)(target1*ticks_in_degree_1)) > 30 && time.seconds() < 2) {
                 return true;
             } else {
                 arm1.setPower(0);
@@ -90,11 +89,12 @@ public class ARM1_NEW {
         return new LiftHookSpecimen();
     }
     public class LiftRung implements Action {
+        ElapsedTime time = new ElapsedTime();
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
             target1 = 3.4193;
             ARM_Control_PID(target1);
-            if (Math.abs(arm1.getCurrentPosition()-(int)(target1*ticks_in_degree_1)) > 30) {
+            if (Math.abs(arm1.getCurrentPosition()-(int)(target1*ticks_in_degree_1)) > 30 && time.seconds() < 2) {
                 return true;
             } else {
                 arm1.setPower(0);
@@ -106,11 +106,12 @@ public class ARM1_NEW {
         return new LiftRung();
     }
     public class LiftWall implements Action {
+        ElapsedTime time = new ElapsedTime();
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
             target1 = 12.0513;
             ARM_Control_PID(target1);
-            if (Math.abs(arm1.getCurrentPosition()-(int)(target1*ticks_in_degree_1)) > 30) {
+            if (Math.abs(arm1.getCurrentPosition()-(int)(target1*ticks_in_degree_1)) > 30 && time.seconds() < 2) {
                 return true;
             } else {
                 arm1.setPower(0);
@@ -124,11 +125,12 @@ public class ARM1_NEW {
 
 
     public class LiftLowBasket implements Action {
+        ElapsedTime time = new ElapsedTime();
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
             target1 = 50;
             ARM_Control_PID(target1);
-            if (Math.abs(arm1.getCurrentPosition()-(int)(target1*ticks_in_degree_1)) > 30) {
+            if (Math.abs(arm1.getCurrentPosition()-(int)(target1*ticks_in_degree_1)) > 30 && time.seconds() < 2) {
                 return true;
             } else {
                 arm1.setPower(0);
@@ -138,11 +140,12 @@ public class ARM1_NEW {
     }
     public Action liftLowBasket() {return new LiftLowBasket();}
     public class LiftFloor implements Action {
+        ElapsedTime time = new ElapsedTime();
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
             target1 = 2.6303;
             ARM_Control_PID(target1);
-            if (Math.abs(arm1.getCurrentPosition()-(int)(target1*ticks_in_degree_1)) > 30) {
+            if (Math.abs(arm1.getCurrentPosition()-(int)(target1*ticks_in_degree_1)) > 30 && time.seconds() < 2) {
                 return true;
             } else {
                 arm1.setPower(0);
@@ -152,11 +155,12 @@ public class ARM1_NEW {
     }
     public Action liftFloor() {return new LiftFloor();}
     public class LiftDown implements Action {
+        ElapsedTime time = new ElapsedTime();
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
             target1 = 4.48338159887;
             ARM_Control_PID(target1);
-            if (Math.abs(arm1.getCurrentPosition()-(int)(target1*ticks_in_degree_1)) > 30) {
+            if (Math.abs(arm1.getCurrentPosition()-(int)(target1*ticks_in_degree_1)) > 30 && time.seconds() < 2) {
                 return true;
             } else {
                 arm1.setPower(0);

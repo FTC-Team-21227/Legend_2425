@@ -24,36 +24,37 @@ public class AUTON2025REDRIGHT_4 extends LinearOpMode {
         INTAKE_ANGLE intake_angle = new INTAKE_ANGLE(hardwareMap);
 
         TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose) //first specimen
-                .waitSeconds(1)
-                .splineToConstantHeading(new Vector2d(10,60),0);
-        TrajectoryActionBuilder tab2 = drive.actionBuilder(new Pose2d(10, 60, 0)) //pull first specimen
+                //.waitSeconds(1)
+                .splineToConstantHeading(new Vector2d(22,60),0);
+        TrajectoryActionBuilder tab2 = drive.actionBuilder(new Pose2d(22, 60, 0)) //pull first specimen
                 .splineToConstantHeading(new Vector2d(5,60),Math.toRadians(180))
                 ;
         TrajectoryActionBuilder tab3 = drive.actionBuilder(new Pose2d(5, 60, 0)) //push colored samples
-                .splineToConstantHeading(new Vector2d(43, 30),Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(13,17),Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(43, 17),Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(13,5),Math.toRadians(180));
-        TrajectoryActionBuilder tab4 = drive.actionBuilder(new Pose2d(13, 5, 0)) //face the wall for second specimen
+                .splineToConstantHeading(new Vector2d(5, 30),Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(45, 25),Math.toRadians(-90))
+                .splineToConstantHeading(new Vector2d(8,10),Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(45, 10),Math.toRadians(-90))
+                .splineToConstantHeading(new Vector2d(8,0),Math.toRadians(180));
+        TrajectoryActionBuilder tab4 = drive.actionBuilder(new Pose2d(8, 0, 0)) //face the wall for second specimen
                 .strafeToSplineHeading(new Vector2d(6,50),Math.toRadians(-90));
         TrajectoryActionBuilder tab5 = drive.actionBuilder(new Pose2d(6, 50, Math.toRadians(-90))) //go to second specimen
                 .splineToConstantHeading(new Vector2d(6,30),Math.toRadians(-90));
         TrajectoryActionBuilder tab6 = drive.actionBuilder(new Pose2d(6, 30, Math.toRadians(-90))) //pick up and place second specimen
                 .waitSeconds(1)
                 .lineToY(35)
-                .splineToSplineHeading(new Pose2d(18,65,Math.toRadians(0)),Math.toRadians(0));
-        TrajectoryActionBuilder tab7 = drive.actionBuilder(new Pose2d(18, 65, 0)) //go to third specimen
-                .lineToX(13);
-        TrajectoryActionBuilder tab8 = drive.actionBuilder(new Pose2d(13, 65, 0)) //go to third specimen
+                .splineToSplineHeading(new Pose2d(22,65,Math.toRadians(0)),Math.toRadians(0));
+        TrajectoryActionBuilder tab7 = drive.actionBuilder(new Pose2d(22, 65, 0)) //go to third specimen
+                .lineToX(7);
+        TrajectoryActionBuilder tab8 = drive.actionBuilder(new Pose2d(7, 65, 0)) //go to third specimen
                 .splineToSplineHeading(new Pose2d(6,30,Math.toRadians(-90)),Math.toRadians(-90));
         TrajectoryActionBuilder tab9 = drive.actionBuilder(new Pose2d(6, 30, Math.toRadians(-90))) //pick up and place third specimen
                 .waitSeconds(1)
                 .lineToY(35)
-                .splineToSplineHeading(new Pose2d(18,65,Math.toRadians(0)),Math.toRadians(0));
-        TrajectoryActionBuilder tab10 = drive.actionBuilder(new Pose2d(13, 65, Math.toRadians(0)))
-                .lineToX(13);
-        TrajectoryActionBuilder tab11 = drive.actionBuilder(new Pose2d(18, 65, 0)) //park
-                .splineToConstantHeading(new Vector2d(6,30),Math.toRadians(-90));
+                .splineToSplineHeading(new Pose2d(22,70,Math.toRadians(0)),Math.toRadians(0));
+        TrajectoryActionBuilder tab10 = drive.actionBuilder(new Pose2d(22, 70, Math.toRadians(0)))
+                .lineToX(7);
+        TrajectoryActionBuilder tab11 = drive.actionBuilder(new Pose2d(7, 65, 0)) //park
+                .splineToConstantHeading(new Vector2d(0,10),Math.toRadians(-90));
         TrajectoryActionBuilder waitTab = drive.actionBuilder(initialPose)
                 .waitSeconds(1);
 
