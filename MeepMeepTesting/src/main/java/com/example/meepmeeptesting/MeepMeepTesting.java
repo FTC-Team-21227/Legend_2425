@@ -19,12 +19,13 @@ public class MeepMeepTesting {
         //        TrajectoryActionBuilder tab2 = drive.actionBuilder(new Pose2d(10, 72, 0))
         myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(11, 63.5, Math.toRadians(270)))
                 .strafeTo(new Vector2d(11,53.5)) //hang specimen
-                .strafeTo(new Vector2d(11, 56.5)) //back up to hang specimen, y+5 worked empirically
-                .splineToSplineHeading(new Pose2d(46.5, 50.5, Math.toRadians(270)), Math.toRadians(0)) //get 1st sample from the left side
+                .strafeTo(new Vector2d(11, 55.5)) //back up to hang specimen, y+5 worked empirically
+                .strafeTo(new Vector2d(53, 51)) //get 1st sample from the left side
+                        .strafeTo(new Vector2d(53, 49))
                 .strafeToLinearHeading(new Vector2d(30, 44), Math.toRadians(40)) //go away from wall bec arms lifting
                 .strafeTo(new Vector2d(44, 44)) //go to basket
                 .strafeTo(new Vector2d(33, 43))//go away from while lowering arms
-                .splineToLinearHeading(new Pose2d(51.5, 56.5, Math.toRadians(270)), Math.toRadians(0)) //get 2nd sample
+                .splineToLinearHeading(new Pose2d(57.5, 56.5, Math.toRadians(270)), Math.toRadians(0)) //get 2nd sample
                 .strafeTo(new Vector2d(56, 50.5)) //go forward to grab 2nd sample
                 .strafeTo(new Vector2d(43, 50.5)) //go away from basket/wall for space to turn
                 .strafeToLinearHeading(new Vector2d(44, 44), Math.toRadians(40))//go to basket
