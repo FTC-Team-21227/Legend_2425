@@ -21,12 +21,12 @@ public class ARM2_NEW {
     double f2 = TunePID.f2;
     //ticks to degrees conversion, very useful
     private final double ticks_in_degree_2 = 145.1*28/360; // = 11.2855555556
-    private final double L1 = 0;
-    private final double L2 = 0;
-    private final double x1 = 0;
-    private final double x2 = 0;
-    private final double m1 = 0;
-    private final double m2 = 0;
+    private final double L1 = 43.2;
+    private final double L2 = 43.2;
+    private final double x1 = 36.96;
+    private final double x2 = 26.4;
+    private final double m1 = 810;
+    private final double m2 = 99.79;
     private static double target2;
     public static double getTarget2(){
         return target2;
@@ -51,7 +51,7 @@ public class ARM2_NEW {
     public class LiftRung implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            target2 = 158.644092101;
+            target2 = 95.3431;
             ARM_Control_PID(target2);
             if (Math.abs(arm2.getCurrentPosition()-(int)(target2*ticks_in_degree_2)) > 30) {
                 return true;

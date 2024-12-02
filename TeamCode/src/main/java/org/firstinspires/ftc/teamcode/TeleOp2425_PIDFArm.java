@@ -35,12 +35,12 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
     //ticks to degrees conversion, very useful
     private final double ticks_in_degree_1 = 537.7*28/360; // = 41.8211111111
     private final double ticks_in_degree_2 = 145.1*28/360; // = 11.2855555556
-    private final double L1 = 0;
-    private final double L2 = 0;
-    private final double x1 = 0;
-    private final double x2 = 0;
-    private final double m1 = 0;
-    private final double m2 = 0;
+    private final double L1 = 43.2;
+    private final double L2 = 43.2;
+    private final double x1 = 36.96;
+    private final double x2 = 26.4;
+    private final double m1 = 810;
+    private final double m2 = 99.79;
     private DcMotor W_BL;
     private DcMotor W_BR;
     private DcMotor W_FR;
@@ -148,6 +148,7 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
                 telemetry.addData("ARM1 Power", ARM1.getPower());
                 telemetry.addData("ARM2 Power", ARM2.getPower());
 
+
                 telemetry.update();
             }
         }
@@ -187,6 +188,7 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
         m2*Math.cos(Math.atan(((x2*Math.sin(Math.toRadians(target1+target2)))+(L1*Math.sin(Math.toRadians(Math.toRadians(target1)))))/((L1*Math.cos(Math.toRadians(target1)))+(x2*Math.cos(Math.toRadians(target1+target2))))))*
         Math.sqrt(Math.pow((x2*Math.sin(Math.toRadians(target1+target2))+L1*Math.sin(Math.toRadians(target1))),2)+Math.pow((x2*Math.cos(Math.toRadians(target1+target2))+L1*Math.cos(Math.toRadians(target1))),2))) * f1; // feedforward calculation, change when equation is derived
         double power1 = pid1 + ff1;
+        //telemetry.addData("ff1",ff1);
         ARM1.setPower(power1); //set the power
 
         controller2.setPID(p2,i2,d2);
@@ -236,8 +238,8 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
             hanging = true;
         }
         if (gamepad1.x) {//high rung
-            target1 = 36.8354632163;
-            target2 = 158.644092101;
+            target1 = 3.4193;
+            target2 = 95.3431;
         }
         if (gamepad1.y) {//high bucket
             target1 = 97.854286777;
