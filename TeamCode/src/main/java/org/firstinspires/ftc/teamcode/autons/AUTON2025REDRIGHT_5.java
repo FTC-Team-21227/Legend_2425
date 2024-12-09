@@ -39,8 +39,8 @@ public class AUTON2025REDRIGHT_5 extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(62, -20),Math.toRadians(0))
                 .strafeTo(new Vector2d(62, -53));
         TrajectoryActionBuilder tab4 = drive.actionBuilder(new Pose2d(62, -53, Math.toRadians(90))) //face the wall for second specimen
-                .turnTo(Math.toRadians(0))
-                .strafeTo(new Vector2d(20,-60));
+                //.turnTo(Math.toRadians(0))
+                .strafeToLinearHeading(new Vector2d(20,-60),Math.toRadians(0));
                 //.setTangent(Math.toRadians(-90))
                 //.splineToLinearHeading(new Pose2d(20,-55,0),Math.toRadians(180));
         TrajectoryActionBuilder tab5 = drive.actionBuilder(new Pose2d(20, -60, Math.toRadians(0))) //go to second specimen
@@ -50,31 +50,18 @@ public class AUTON2025REDRIGHT_5 extends LinearOpMode {
                 .setTangent(Math.toRadians(180))
                 .splineToSplineHeading(new Pose2d(5,-41.3,Math.toRadians(90)),Math.toRadians(90));
         TrajectoryActionBuilder tab7 = drive.actionBuilder(new Pose2d(5, -41.3, Math.toRadians(90))) //go to third specimen
-                .strafeTo(new Vector2d(5,-60))
-                .turnTo(Math.toRadians(0))
-                .strafeTo(new Vector2d(40,-60));
+                .setTangent(Math.toRadians(-90))
+                .splineToSplineHeading(new Pose2d(40,-55,Math.toRadians(0)),Math.toRadians(0));
         TrajectoryActionBuilder tab8 = drive.actionBuilder(new Pose2d(40, -60, Math.toRadians(0))) //pick up and place third specimen
                 .waitSeconds(1)
                 .setTangent(Math.toRadians(180))
                 .splineToSplineHeading(new Pose2d(0,-41.3,Math.toRadians(90)),Math.toRadians(90));
         TrajectoryActionBuilder tab9 = drive.actionBuilder(new Pose2d(0, -41.3, Math.toRadians(90))) //park
-                .strafeTo(new Vector2d(0,-60))
-                .turnTo(Math.toRadians(0))
-                .strafeTo(new Vector2d(40,-60));
-//        TrajectoryActionBuilder tab8 = drive.actionBuilder(new Pose2d(5, -41.3, Math.toRadians(90))) //go to third specimen
-//                .strafeTo(new Vector2d(5,-55))
-//                .turnTo(Math.toRadians(0))
-//                .strafeTo(new Vector2d(40,-55));
-//        TrajectoryActionBuilder tab9 = drive.actionBuilder(new Pose2d(6, 30, Math.toRadians(-90))) //pick up and place third specimen
-//                .waitSeconds(1)
-//                .lineToY(35)
-//                .splineToSplineHeading(new Pose2d(22,70,Math.toRadians(0)),Math.toRadians(0));
-//        TrajectoryActionBuilder tab10 = drive.actionBuilder(new Pose2d(22, 70, Math.toRadians(0)))
-//                .lineToX(7);
-//        TrajectoryActionBuilder tab11 = drive.actionBuilder(new Pose2d(7, 65, 0)) //park
-//                .splineToConstantHeading(new Vector2d(0,10),Math.toRadians(-90));
-        TrajectoryActionBuilder waitTab = drive.actionBuilder(initialPose)
-                .waitSeconds(1);
+                .setTangent(Math.toRadians(-90))
+                .splineToSplineHeading(new Pose2d(40,-55,Math.toRadians(0)),Math.toRadians(0));
+        TrajectoryActionBuilder waitTab = drive.actionBuilder(new Pose2d(40, -60, Math.toRadians(0)))
+                .waitSeconds(1)
+                .turnTo(Math.toRadians(0.1));
 
         claw.closeClaw();
         intake_angle.RotatePosition1();
@@ -127,30 +114,31 @@ public class AUTON2025REDRIGHT_5 extends LinearOpMode {
                         //waitSecond,
                         //pick up and place second specimen
                         new ParallelAction(
-                            arm1.liftRung(),
-                            arm2.liftRung(),
+                            arm1.waitLiftRung(),
+                            arm2.waitLiftRung(),
                             sixthTrajectory
                         ),
                         //go to third specimen
                         claw.openClaw(),
                         new ParallelAction(
                             seventhTrajectory,
-                            arm1.liftWall(),
-                            arm2.liftWall()
+                            arm1.waitLiftWall(),
+                            arm2.waitLiftWall()
                         ),
                         //pick up and place third specimen
                         claw.closeClaw(),
+                        //waitSecond,
                         new ParallelAction(
                             eighthTrajectory,
-                            arm1.liftRung(),
-                            arm2.liftRung()
+                            arm1.waitLiftRung(),
+                            arm2.waitLiftRung()
                         ),
                         //go park
                         claw.openClaw(),
                         new ParallelAction(
                             ninthTrajectory,
-                            arm1.liftDown(),
-                            arm2.liftDown(),
+                            arm1.waitLiftDown(),
+                            arm2.waitLiftDown(),
                             intake_angle.RotatePosition1()
                         )
                 )

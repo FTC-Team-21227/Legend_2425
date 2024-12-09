@@ -84,6 +84,54 @@ public class ARM2_NEW {
     public Action liftLowBasket() {return new LiftTarget(50);} //not tested i think
     public Action liftFloor() {return new LiftTarget(163.6641);}
     public Action liftDown() {return new LiftTarget(5.0199819357);}
+
+    public class waitLiftTarget implements Action {
+        ElapsedTime time = new ElapsedTime();
+        boolean start;
+        double target2;
+        public waitLiftTarget(double pos) {
+            target2 = pos;
+            start = false;
+        }
+        public double ARM_Control_PID() {
+//            double target1 = ARM1_NEW.getTarget1();
+            int arm2Pos = arm2.getCurrentPosition();
+            double pid2 = controller2.calculate(arm2Pos, (int) (target2 * ticks_in_degree_2)); //PID calculation
+            double ff2 = 0; //feedforward calculation, change when equation is derived
+            return ((pid2/* + ff2*/));
+        }
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            if (!start) {
+                time.reset();
+                start = true;
+            }
+            packet.addLine("time.seconds():"+(time.seconds()));
+            packet.addLine("arm2pos:"+(arm2.getCurrentPosition()));
+            packet.addLine("target2pos:"+target2);
+            packet.addLine("target2pos:"+(int)(target2*ticks_in_degree_2));
+            if (/*Math.abs(arm1.getCurrentPosition()-(int)(target1*ticks_in_degree_1)) > 30 && */time.seconds() < 3) {
+                packet.addLine("still running 2");
+                if (time.seconds()>1){
+                    double power = ARM_Control_PID();
+                    packet.addLine("power2:"+power);
+                    arm2.setPower(power);}
+                else{
+                    arm2.setPower(0);
+                }
+                return true;
+            } else {
+                arm2.setPower(0);
+                return false;
+            }
+        }
+    }
+    public Action waitLiftHighBasket() {return new waitLiftTarget(180.492048747);}
+    public Action waitLiftRung() {return new waitLiftTarget(95.3431);}
+    public Action waitLiftWall() {return new waitLiftTarget(155.7743);}
+    public Action waitLiftLowBasket() {return new waitLiftTarget(50);} //not tested i think
+    public Action waitLiftFloor() {return new waitLiftTarget(163.6641);}
+    public Action waitLiftDown() {return new waitLiftTarget(5.0199819357);}
     //old code, do not delete until new code tested
 //    public class LiftRung implements Action {
 //        ElapsedTime time2 = new ElapsedTime();
