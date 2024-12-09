@@ -39,26 +39,27 @@ public class AUTON2025REDRIGHT_5 extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(62, -20),Math.toRadians(0))
                 .strafeTo(new Vector2d(62, -53));
         TrajectoryActionBuilder tab4 = drive.actionBuilder(new Pose2d(62, -53, Math.toRadians(90))) //face the wall for second specimen
-                //.turnTo(Math.toRadians(0))
-                .strafeToLinearHeading(new Vector2d(20,-60),Math.toRadians(0));
+                .strafeTo(new Vector2d(30,-50))
+                .turnTo(Math.toRadians(0))
+                ;
                 //.setTangent(Math.toRadians(-90))
                 //.splineToLinearHeading(new Pose2d(20,-55,0),Math.toRadians(180));
-        TrajectoryActionBuilder tab5 = drive.actionBuilder(new Pose2d(20, -60, Math.toRadians(0))) //go to second specimen
+        TrajectoryActionBuilder tab5 = drive.actionBuilder(new Pose2d(20, -50, Math.toRadians(0))) //go to second specimen
                 .strafeTo(new Vector2d(40,-60));
         TrajectoryActionBuilder tab6 = drive.actionBuilder(new Pose2d(40, -60, Math.toRadians(0))) //pick up and place second specimen
                 .waitSeconds(1)
                 .setTangent(Math.toRadians(180))
-                .splineToSplineHeading(new Pose2d(5,-41.3,Math.toRadians(90)),Math.toRadians(90));
-        TrajectoryActionBuilder tab7 = drive.actionBuilder(new Pose2d(5, -41.3, Math.toRadians(90))) //go to third specimen
+                .splineToSplineHeading(new Pose2d(0,-39.3,Math.toRadians(90)),Math.toRadians(90));
+        TrajectoryActionBuilder tab7 = drive.actionBuilder(new Pose2d(0, -39.3, Math.toRadians(90))) //go to third specimen
                 .setTangent(Math.toRadians(-90))
-                .splineToSplineHeading(new Pose2d(40,-55,Math.toRadians(0)),Math.toRadians(0));
-        TrajectoryActionBuilder tab8 = drive.actionBuilder(new Pose2d(40, -60, Math.toRadians(0))) //pick up and place third specimen
+                .splineToSplineHeading(new Pose2d(42.5,-64,Math.toRadians(0)),Math.toRadians(0));
+        TrajectoryActionBuilder tab8 = drive.actionBuilder(new Pose2d(42.5, -64, Math.toRadians(0))) //pick up and place third specimen
                 .waitSeconds(1)
                 .setTangent(Math.toRadians(180))
-                .splineToSplineHeading(new Pose2d(0,-41.3,Math.toRadians(90)),Math.toRadians(90));
-        TrajectoryActionBuilder tab9 = drive.actionBuilder(new Pose2d(0, -41.3, Math.toRadians(90))) //park
+                .splineToSplineHeading(new Pose2d(-5,-39.3,Math.toRadians(90)),Math.toRadians(90));
+        TrajectoryActionBuilder tab9 = drive.actionBuilder(new Pose2d(-5, -39.3, Math.toRadians(90))) //park
                 .setTangent(Math.toRadians(-90))
-                .splineToSplineHeading(new Pose2d(40,-55,Math.toRadians(0)),Math.toRadians(0));
+                .splineToSplineHeading(new Pose2d(40,-55,Math.toRadians(90)),Math.toRadians(0));
         TrajectoryActionBuilder waitTab = drive.actionBuilder(new Pose2d(40, -60, Math.toRadians(0)))
                 .waitSeconds(1)
                 .turnTo(Math.toRadians(0.1));
@@ -94,8 +95,8 @@ public class AUTON2025REDRIGHT_5 extends LinearOpMode {
                                 firstTrajectory
                         ),
                         //pull first specimen
-                        secondTrajectory,
                         claw.openClaw(),
+                        secondTrajectory,
                         //push colored samples
                         new ParallelAction(
                                 arm1.liftDown(),
@@ -103,8 +104,8 @@ public class AUTON2025REDRIGHT_5 extends LinearOpMode {
                                 thirdTrajectory
                         ),
                         //face the wall for second specimen
-                        fourthTrajectory,
                         new ParallelAction(
+                            fourthTrajectory,
                             arm1.liftWall(),
                             arm2.liftWall()
                         ),
