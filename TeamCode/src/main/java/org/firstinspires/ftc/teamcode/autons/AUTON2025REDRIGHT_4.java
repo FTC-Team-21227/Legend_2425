@@ -16,50 +16,49 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 public class AUTON2025REDRIGHT_4 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        Pose2d initialPose = new Pose2d(0, 55, Math.toRadians(0));
+        Pose2d initialPose = new Pose2d(15, -63.3, Math.toRadians(90));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         ARM1_NEW arm1 = new ARM1_NEW(hardwareMap);
         ARM2_NEW arm2 = new ARM2_NEW(hardwareMap);
         CLAW claw = new CLAW(hardwareMap);
         INTAKE_ANGLE intake_angle = new INTAKE_ANGLE(hardwareMap);
 
-        TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose) //first specimen
-                //.waitSeconds(1)
-                .splineToConstantHeading(new Vector2d(22,60),0);
-        TrajectoryActionBuilder tab2 = drive.actionBuilder(new Pose2d(22, 60, 0)) //pull first specimen
-                .splineToConstantHeading(new Vector2d(5,60),Math.toRadians(180))
+        TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
+                .waitSeconds(1)
+                .strafeTo(new Vector2d(10,-41.3));
+        TrajectoryActionBuilder tab2 = drive.actionBuilder(new Pose2d(10, -41.3, Math.toRadians(90)))
+                .strafeTo(new Vector2d(10,-53));
                 ;
-        TrajectoryActionBuilder tab3 = drive.actionBuilder(new Pose2d(5, 60, 0)) //push colored samples
-                .splineToConstantHeading(new Vector2d(5, 30),Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(45, 25),Math.toRadians(-90))
-                .splineToConstantHeading(new Vector2d(8,10),Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(45, 10),Math.toRadians(-90))
-                .splineToConstantHeading(new Vector2d(8,0),Math.toRadians(180));
-        TrajectoryActionBuilder tab4 = drive.actionBuilder(new Pose2d(8, 0, 0)) //face the wall for second specimen
-                .strafeToSplineHeading(new Vector2d(6,50),Math.toRadians(-90));
-        TrajectoryActionBuilder tab5 = drive.actionBuilder(new Pose2d(6, 50, Math.toRadians(-90))) //go to second specimen
-                .splineToConstantHeading(new Vector2d(6,30),Math.toRadians(-90));
-        TrajectoryActionBuilder tab6 = drive.actionBuilder(new Pose2d(6, 30, Math.toRadians(-90))) //pick up and place second specimen
+        TrajectoryActionBuilder tab3 = drive.actionBuilder(new Pose2d(10, -53, Math.toRadians(90)))
+                .strafeTo(new Vector2d(40,-53))
+                .strafeTo(new Vector2d(40, -20))
+                .strafeTo(new Vector2d(50, -20))
+                .strafeTo(new Vector2d(50, -53))
+                .strafeTo(new Vector2d(50, -20))
+                .strafeTo(new Vector2d(62, -20))
+                .strafeTo(new Vector2d(62, -53));
+        TrajectoryActionBuilder tab4 = drive.actionBuilder(new Pose2d(62, -53, Math.toRadians(90)))
+                //.strafeTo(new Vector2d(5,12))
+                .strafeToSplineHeading(new Vector2d(20,-55),Math.toRadians(0));
+        TrajectoryActionBuilder tab5 = drive.actionBuilder(new Pose2d(20, -55, Math.toRadians(0)))
+                .strafeTo(new Vector2d(40,-55));
+                //.strafeTo(new Vector2d(6,30));
+        TrajectoryActionBuilder tab6 = drive.actionBuilder(new Pose2d(40, -55, Math.toRadians(0)))
                 .waitSeconds(1)
-                .lineToY(35)
-                .splineToSplineHeading(new Pose2d(22,65,Math.toRadians(0)),Math.toRadians(0));
-        TrajectoryActionBuilder tab7 = drive.actionBuilder(new Pose2d(22, 65, 0)) //go to third specimen
-                .lineToX(7);
-        TrajectoryActionBuilder tab8 = drive.actionBuilder(new Pose2d(7, 65, 0)) //go to third specimen
-                .splineToSplineHeading(new Pose2d(6,30,Math.toRadians(-90)),Math.toRadians(-90));
-        TrajectoryActionBuilder tab9 = drive.actionBuilder(new Pose2d(6, 30, Math.toRadians(-90))) //pick up and place third specimen
-                .waitSeconds(1)
-                .lineToY(35)
-                .splineToSplineHeading(new Pose2d(22,70,Math.toRadians(0)),Math.toRadians(0));
-        TrajectoryActionBuilder tab10 = drive.actionBuilder(new Pose2d(22, 70, Math.toRadians(0)))
-                .lineToX(7);
-        TrajectoryActionBuilder tab11 = drive.actionBuilder(new Pose2d(7, 65, 0)) //park
-                .splineToConstantHeading(new Vector2d(0,10),Math.toRadians(-90));
-        TrajectoryActionBuilder waitTab = drive.actionBuilder(initialPose)
-                .waitSeconds(1);
+                .turnTo(Math.toRadians(90))
+                .strafeTo(new Vector2d(22,-55))
+                .strafeTo(new Vector2d(5,-55));
+        TrajectoryActionBuilder tab7 = drive.actionBuilder(new Pose2d(5, -55, Math.toRadians(90)))
+                .strafeTo(new Vector2d(5,-41.3));
+        TrajectoryActionBuilder tab8 = drive.actionBuilder(new Pose2d(5, -41.3, Math.toRadians(90)))
+                .strafeTo(new Vector2d(5,-55))
+                .turnTo(Math.toRadians(0))
+                .strafeTo(new Vector2d(40,-55));
+        TrajectoryActionBuilder tab9 = drive.actionBuilder(new Pose2d(10, 72, 0))
+                .waitSeconds(0.5);
 
         claw.closeClaw();
-        intake_angle.RotatePosition1();
+        intake_angle.RotatePosition0();
 
         waitForStart();
 
@@ -71,16 +70,12 @@ public class AUTON2025REDRIGHT_4 extends LinearOpMode {
         Action sixthTrajectory = tab6.build();
         Action seventhTrajectory = tab7.build();
         Action eighthTrajectory = tab8.build();
-        Action ninthTrajectory = tab9.build();
-        Action tenthTrajectory = tab10.build();
-        Action eleventhTrajectory = tab11.build();
-        Action waitSecond = waitTab.build();
+        Action bbb = tab9.build();
 
 
 
         Actions.runBlocking(
                 new SequentialAction(
-                        //first specimen
                         new ParallelAction(
                                 claw.closeClaw(),
                                 intake_angle.RotatePosition0(),
@@ -88,52 +83,59 @@ public class AUTON2025REDRIGHT_4 extends LinearOpMode {
                                 arm2.liftRung(),
                                 firstTrajectory
                         ),
-                        //pull first specimen
                         secondTrajectory,
                         claw.openClaw(),
-                        //push colored samples
                         new ParallelAction(
                                 arm1.liftDown(),
                                 arm2.liftDown(),
                                 thirdTrajectory
                         ),
-                        //face the wall for second specimen
                         fourthTrajectory,
                         new ParallelAction(
                             arm1.liftWall(),
                             arm2.liftWall()
                         ),
-                        //go to second specimen
                         fifthTrajectory,
                         claw.closeClaw(),
-                        waitSecond,
-                        //pick up and place second specimen
                         new ParallelAction(
-                            arm1.liftRung(),
-                            arm2.liftRung(),
-                            sixthTrajectory
-                        ),
-                        seventhTrajectory,
-                        claw.openClaw(),
-                        new ParallelAction(
-                            eighthTrajectory,
-                            arm1.liftWall(),
-                            arm2.liftWall()
-                        ),
-                        claw.closeClaw(),
-                        new ParallelAction(
-                            ninthTrajectory,
                             arm1.liftRung(),
                             arm2.liftRung()
                         ),
-                        tenthTrajectory,
-                        claw.openClaw(),
+                        sixthTrajectory,
+                        seventhTrajectory,
                         new ParallelAction(
-                            eleventhTrajectory,
+                            claw.openClaw(),
+                            eighthTrajectory,
                             arm1.liftDown(),
                             arm2.liftDown(),
                             intake_angle.RotatePosition1()
                         )
+//                    new ParallelAction(
+//                            claw.closeClaw(),
+//                            intake_angle.RotatePosition0(),
+//                            arm1.liftRung(),
+//                            arm2.liftRung()
+//                    ),
+//                    claw.openClaw(),
+//                    new ParallelAction(
+//                            arm1.liftDown(),
+//                            arm2.liftDown()
+//                    ),
+//                    new ParallelAction(
+//                            arm1.liftWall(),
+//                            arm2.liftWall()
+//                    ),
+//                    claw.closeClaw(),
+//                    new ParallelAction(
+//                            arm1.liftRung(),
+//                            arm2.liftRung()
+//                    ),
+//                    new ParallelAction(
+//                            claw.openClaw(),
+//                            arm1.liftDown(),
+//                            arm2.liftDown(),
+//                            intake_angle.RotatePosition1()
+//                    )
                 )
         );
     }

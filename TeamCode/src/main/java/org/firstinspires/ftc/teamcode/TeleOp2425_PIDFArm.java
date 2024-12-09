@@ -107,13 +107,12 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
                 W_BR.setPower(Motor_power_BR);
                 W_FR.setPower(Motor_power_FR);
                 W_FL.setPower(Motor_power_FL);
-                //gamepad presets and other things to set the target positions for each arm motor
-                ARM_SetTargets();
                 //controls the arm motor powers
                 if (!(ARM1calibrated && ARM2calibrated)) {
                     ARM_Calibration(); //calibration function
                 }
                 else {
+                    ARM_SetTargets(); //gamepad presets and other things to set the target positions for each arm motor
                     ARM_PID_Control(); //PID control function based on target positions
                 }
                 //controls the intake servos
@@ -208,6 +207,9 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
             target1 = 0;
             ARM1calibrated = true;
         }
+        else if (!ARM1calibrated){
+            ARM1.setPower(-0.2);
+        }
         if (!ARM2Sensor.isPressed() && !ARM2calibrated) {
             ARM2.setPower(0);
             ARM2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -215,6 +217,9 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
             ARM2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             target2 = 0;
             ARM2calibrated = true;
+        }
+        else if (!ARM2calibrated){
+            ARM2.setPower(-0.2);
         }
     }
     private void ARM_SetTargets() {
