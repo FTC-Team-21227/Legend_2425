@@ -6,8 +6,6 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -21,7 +19,8 @@ public class ARM2_NEW {
     double p2 = TunePID.p2, i2 = TunePID.i2, d2 = TunePID.d2;
     double f2 = TunePID.f2;
     //ticks to degrees conversion, very useful
-    private final double ticks_in_degree_2 = 145.1 * 28 / 360; // = 11.2855555556
+    private final double ticks_in_degree_2 = 11.2855555556;
+    //length, COM, mass values for feedforward calculation (not even performed in arm2)
     private final double L1 = 43.2;
     private final double L2 = 43.2;
     private final double x1 = 36.96;
@@ -35,7 +34,7 @@ public class ARM2_NEW {
 
     public ARM2_NEW(HardwareMap hardwareMap) {
         arm2 = hardwareMap.get(DcMotor.class, "ARM2");
-        arm2.setDirection(DcMotorSimple.Direction.REVERSE);
+        arm2.setDirection(DcMotor.Direction.REVERSE); //CHANGE BACK TO DCMOTORSIMPLE IF SOMETHING DOESN'T WORK
         arm2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         arm2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -66,7 +65,7 @@ public class ARM2_NEW {
             packet.addLine("arm2pos:"+(arm2.getCurrentPosition()));
             packet.addLine("target2pos:"+target2);
             packet.addLine("target2pos:"+(int)(target2*ticks_in_degree_2));
-            if (/*Math.abs(arm1.getCurrentPosition()-(int)(target1*ticks_in_degree_1)) > 30 && */time.seconds() < 2) {
+            if (time.seconds() < 2) {
                 packet.addLine("still running 2");
                 double power = ARM_Control_PID();
                 packet.addLine("power2:"+power);
@@ -89,9 +88,16 @@ public class ARM2_NEW {
         ElapsedTime time = new ElapsedTime();
         boolean start;
         double target2;
+        double waitTime;
         public waitLiftTarget(double pos) {
             target2 = pos;
             start = false;
+            waitTime = 1;
+        }
+        public waitLiftTarget(double pos, double tim) {
+            target2 = pos;
+            start = false;
+            waitTime = tim;
         }
         public double ARM_Control_PID() {
 //            double target1 = ARM1_NEW.getTarget1();
@@ -110,9 +116,9 @@ public class ARM2_NEW {
             packet.addLine("arm2pos:"+(arm2.getCurrentPosition()));
             packet.addLine("target2pos:"+target2);
             packet.addLine("target2pos:"+(int)(target2*ticks_in_degree_2));
-            if (/*Math.abs(arm1.getCurrentPosition()-(int)(target1*ticks_in_degree_1)) > 30 && */time.seconds() < 3) {
+            if (time.seconds() < 2+waitTime) {
                 packet.addLine("still running 2");
-                if (time.seconds()>1){
+                if (time.seconds()>waitTime){
                     double power = ARM_Control_PID();
                     packet.addLine("power2:"+power);
                     arm2.setPower(power);}
@@ -132,125 +138,10 @@ public class ARM2_NEW {
     public Action waitLiftLowBasket() {return new waitLiftTarget(50);} //not tested i think
     public Action waitLiftFloor() {return new waitLiftTarget(163.6641);}
     public Action waitLiftDown() {return new waitLiftTarget(5.0199819357);}
-    //old code, do not delete until new code tested
-//    public class LiftRung implements Action {
-//        ElapsedTime time2 = new ElapsedTime();
-//        @Override
-//        public boolean run(@NonNull TelemetryPacket packet) {
-//            target2 = 95.3431;
-//            ARM_Control_PID(target2);
-//            packet.addLine("time.seconds():"+(time2.seconds()-time2.startTime()));
-//            if (/*Math.abs(arm2.getCurrentPosition()-(int)(target2*ticks_in_degree_2)) > 30 && */(time2.seconds()-time2.startTime()/1000.) < 2) {
-//                return true;
-//            } else {
-//                arm2.setPower(0);
-//                return false;
-//            }
-//        }
-//    }
-//    public Action liftRung() {
-//        return new LiftRung();
-//    }
-//    public class LiftLowBasket implements Action {
-//        ElapsedTime time = new ElapsedTime();
-//        @Override
-//        public boolean run(@NonNull TelemetryPacket packet) {
-//            target2 = 50;
-//            ARM_Control_PID(target2);
-//            if (Math.abs(arm2.getCurrentPosition()-(int)(target2*ticks_in_degree_2)) > 30 && time.seconds() < 2) {
-//                return true;
-//            } else {
-//                arm2.setPower(0);
-//                return false;
-//            }
-//        }
-//    }
-//    public Action liftLowBasket() {return new LiftLowBasket();}
-//
-//    public class LiftWall implements Action {
-//        ElapsedTime time = new ElapsedTime();
-//        @Override
-//        public boolean run(@NonNull TelemetryPacket packet) {
-//            target2 = 155.7743;
-//            ARM_Control_PID(target2);
-//            packet.addLine("time.seconds():"+(time.seconds()-time.startTime()));
-//            if (/*Math.abs(arm2.getCurrentPosition()-(int)(target2*ticks_in_degree_2)) > 30 || */(time.seconds()-time.startTime()/1000.) < 1.5/*&& time.seconds() < 5*/) {
-//                return true;
-//            } else {
-//                arm2.setPower(0);
-//                return false;
-//            }
-//        }
-//    }
-//    public Action liftWall() {
-//        return new LiftWall();
-//    }
-////    public class HookSpecimen implements Action {
-////        double target2 = 50;
-////        @Override
-////        public boolean run(@NonNull TelemetryPacket packet) {
-////            ARM_Control_PID(target2);
-////            if (Math.abs(arm2.getCurrentPosition()-target2) > 15) {
-////                return true;
-////            } else {
-////                arm2.setPower(0);
-////                return false;
-////            }
-////        }
-////    }
-////    public Action hookSpecimen() {
-////        return new HookSpecimen();
-////    }
-//    public class LiftFloor implements Action {
-//        ElapsedTime time = new ElapsedTime();
-//        @Override
-//        public boolean run(@NonNull TelemetryPacket packet) {
-//            target2 = 163.6641;
-//            ARM_Control_PID(target2);
-//            if (Math.abs(arm2.getCurrentPosition()-(int)(target2*ticks_in_degree_2)) > 30 && time.seconds() < 2) {
-//                return true;
-//            } else {
-//                arm2.setPower(0);
-//                return false;
-//            }
-//        }
-//    }
-//    public Action liftFloor(){
-//        return new LiftFloor();
-//    }
-//
-//    public class LiftDown implements Action {
-//        ElapsedTime time = new ElapsedTime();
-//        @Override
-//        public boolean run(@NonNull TelemetryPacket packet) {
-//            target2 = 5.0199819357;
-//            ARM_Control_PID(target2);
-//            packet.addLine("time.seconds():"+(time.seconds()-time.startTime()));
-//            if (/*Math.abs(arm2.getCurrentPosition()-(int)(target2*ticks_in_degree_2)) > 30 */ (time.seconds()-time.startTime()/1000.) < 2/*&& time.seconds() < 5*/) {
-//                return true;
-//            } else {
-//                arm2.setPower(0);
-//                return false;
-//            }
-//        }
-//    }
-//    public Action liftDown(){
-//        return new LiftDown();
-//    }
-//    public class LiftHighBasket implements Action {
-//        ElapsedTime time = new ElapsedTime();
-//        @Override
-//        public boolean run(@NonNull TelemetryPacket packet) {
-//            target2 = 180.492048747;
-//            ARM_Control_PID(target2);
-//            if (Math.abs(arm2.getCurrentPosition()-(int)(target2*ticks_in_degree_2)) > 30 && time.seconds() < 2) {
-//                return true;
-//            } else {
-//                arm2.setPower(0);
-//                return false;
-//            }
-//        }
-//    }
-//    public Action liftHighBasket() {return new LiftHighBasket();}
-//}
+    public Action waitLiftHighBasket(double seconds) {return new waitLiftTarget(180.492048747,seconds);}
+    public Action waitLiftRung(double seconds) {return new waitLiftTarget(95.3431,seconds);}
+    public Action waitLiftWall(double seconds) {return new waitLiftTarget(155.7743,seconds);}
+    public Action waitLiftLowBasket(double seconds) {return new waitLiftTarget(50,seconds);} //not tested i think
+    public Action waitLiftFloor(double seconds) {return new waitLiftTarget(163.6641,seconds);}
+    public Action waitLiftDown(double seconds) {return new waitLiftTarget(5.0199819357,seconds);}
 }

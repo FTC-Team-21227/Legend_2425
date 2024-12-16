@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -19,8 +21,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 //@Config
-@TeleOp(name = "TeleOp2425_PIDFArm")
-public class TeleOp2425_PIDFArm extends LinearOpMode {
+@TeleOp(name = "TeleOp2425_RR")
+public class TeleOp2425_RR extends LinearOpMode {
     //PID controllers for ARM1 and ARM2
     private PIDController controller1;
     private PIDController controller2;
@@ -41,10 +43,10 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
     private final double x2 = 26.4;
     private final double m1 = 810;
     private final double m2 = 99.79;
-    private DcMotor W_BL;
-    private DcMotor W_BR;
-    private DcMotor W_FR;
-    private DcMotor W_FL;
+//    private DcMotor W_BL;
+//    private DcMotor W_BR;
+//    private DcMotor W_FR;
+//    private DcMotor W_FL;
     private IMU imu;
     private DcMotor ARM1; //bottom arm
     private DcMotor ARM2; //top arm
@@ -75,13 +77,11 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
     /**
      * This function is executed when this Op Mode is selected from the Driver Station.
      */
+    //nota working ruight now
     @Override
     public void runOpMode() throws InterruptedException{
         //getting all the motors, servos, and sensors from the hardware map
-        W_BL = hardwareMap.get(DcMotor.class, "W_BL");
-        W_BR = hardwareMap.get(DcMotor.class, "W_BR");
-        W_FR = hardwareMap.get(DcMotor.class, "W_FR");
-        W_FL = hardwareMap.get(DcMotor.class, "W_FL");
+        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
         imu = hardwareMap.get(IMU.class, "imu");
         ARM1 = hardwareMap.get(DcMotor.class, "ARM1");
         ARM2 = hardwareMap.get(DcMotor.class, "ARM2");
@@ -100,13 +100,14 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
             // Put run blocks here.
             while (opModeIsActive()) {
                 // Put loop blocks here.
-                Calculate_IMU_Rotation_Power(); //calculates each motor power based on IMU reading
-                Calculate_Motor_Power(); //calculates translational and rotational motor power
                 //set power to each wheel motor
-                W_BL.setPower(Motor_power_BL);
-                W_BR.setPower(Motor_power_BR);
-                W_FR.setPower(Motor_power_FR);
-                W_FL.setPower(Motor_power_FL);
+                drive.setDrivePowers(new PoseVelocity2d(
+                        new Vector2d(
+                                -gamepad1.left_stick_y,
+                                -gamepad1.left_stick_x
+                        ),
+                        -gamepad1.right_stick_x
+                ));
                 //controls the arm motor powers
                 if (!(ARM1calibrated && ARM2calibrated)) {
                     ARM_Calibration(); //calibration function
@@ -133,9 +134,9 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
                 telemetry.addData("FWD Power", Motor_fwd_power);
                 telemetry.addData("IMU_Rotation Power", imu_rotation);
                 telemetry.addData("Rotation Power", Motor_Rotation_power);
-                telemetry.addData("ODO_Left", W_FL.getCurrentPosition());
-                telemetry.addData("ODO_Right", W_FR.getCurrentPosition());
-                telemetry.addData("ODO_Center", W_BR.getCurrentPosition());
+//                telemetry.addData("ODO_Left", W_FL.getCurrentPosition());
+//                telemetry.addData("ODO_Right", W_FR.getCurrentPosition());
+//                telemetry.addData("ODO_Center", W_BR.getCurrentPosition());
                 telemetry.addData("ARM1Pos: ", arm1Pos/ticks_in_degree_1);
                 telemetry.addData("ARM1Target: ", target1);
                 telemetry.addData("ARM2 Current Angle: ", arm2Pos/ticks_in_degree_2);
@@ -302,22 +303,22 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        W_FR.setDirection(DcMotor.Direction.REVERSE);
-        W_FL.setDirection(DcMotor.Direction.REVERSE);
-        W_BR.setDirection(DcMotor.Direction.FORWARD);
-        W_BL.setDirection(DcMotor.Direction.REVERSE);
-        W_FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        W_FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        W_BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        W_BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        W_FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        W_FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        W_BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        W_BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        W_FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        W_FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        W_BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        W_BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        W_FR.setDirection(DcMotor.Direction.REVERSE);
+//        W_FL.setDirection(DcMotor.Direction.REVERSE);
+//        W_BR.setDirection(DcMotor.Direction.FORWARD);
+//        W_BL.setDirection(DcMotor.Direction.REVERSE);
+//        W_FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        W_FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        W_BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        W_BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        W_FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        W_FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        W_BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        W_BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        W_FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        W_FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        W_BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        W_BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Intake_Angle.scaleRange(0.65, 0.98);
         ARM1.setDirection(DcMotor.Direction.REVERSE);
         ARM1.setPower(0);
@@ -338,8 +339,8 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
         // Create a Parameters object for use with an IMU in a REV Robotics Control Hub or
         // Expansion Hub, specifying the hub's orientation on the robot via the direction that
         // the REV Robotics logo is facing and the direction that the USB ports are facing.
-        imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD)));
-        imu.resetYaw();
+        //imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD)));
+        //imu.resetYaw();
         waitForStart();
     }
 

@@ -76,7 +76,7 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
      * This function is executed when this Op Mode is selected from the Driver Station.
      */
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException{
         //getting all the motors, servos, and sensors from the hardware map
         W_BL = hardwareMap.get(DcMotor.class, "W_BL");
         W_BR = hardwareMap.get(DcMotor.class, "W_BR");
@@ -276,7 +276,7 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
         } else if (gamepad1.dpad_down) {
             target2 -= 2.40399638714/3;
         }
-        //SOFTWARE LIMITSSSS (never enable unless they ask):
+        //SOFTWARE LIMITSSSS:
 //        if (ARM1.getCurrentPosition() > 12700 && !hanging) {
 //            ARM1.setTargetPosition(12600);
 //        }

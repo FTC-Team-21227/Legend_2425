@@ -24,7 +24,7 @@ public class AUTON2025REDRIGHT_5 extends LinearOpMode {
         INTAKE_ANGLE intake_angle = new INTAKE_ANGLE(hardwareMap);
 
         TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose) //first specimen
-                .waitSeconds(1)
+                .waitSeconds(0.5)
                 .strafeTo(new Vector2d(10,-41.3));
         TrajectoryActionBuilder tab2 = drive.actionBuilder(new Pose2d(10, -41.3, Math.toRadians(90))) //pull first specimen
                 .setTangent(Math.toRadians(-90))
@@ -40,11 +40,8 @@ public class AUTON2025REDRIGHT_5 extends LinearOpMode {
                 .strafeTo(new Vector2d(62, -53));
         TrajectoryActionBuilder tab4 = drive.actionBuilder(new Pose2d(62, -53, Math.toRadians(90))) //face the wall for second specimen
                 .strafeTo(new Vector2d(30,-50))
-                .turnTo(Math.toRadians(0))
-                ;
-                //.setTangent(Math.toRadians(-90))
-                //.splineToLinearHeading(new Pose2d(20,-55,0),Math.toRadians(180));
-        TrajectoryActionBuilder tab5 = drive.actionBuilder(new Pose2d(20, -50, Math.toRadians(0))) //go to second specimen
+                .turnTo(Math.toRadians(0));
+        TrajectoryActionBuilder tab5 = drive.actionBuilder(new Pose2d(30, -50, Math.toRadians(0))) //go to second specimen
                 .strafeTo(new Vector2d(40,-60));
         TrajectoryActionBuilder tab6 = drive.actionBuilder(new Pose2d(40, -60, Math.toRadians(0))) //pick up and place second specimen
                 .waitSeconds(1)
@@ -59,10 +56,7 @@ public class AUTON2025REDRIGHT_5 extends LinearOpMode {
                 .splineToSplineHeading(new Pose2d(-5,-39.3,Math.toRadians(90)),Math.toRadians(90));
         TrajectoryActionBuilder tab9 = drive.actionBuilder(new Pose2d(-5, -39.3, Math.toRadians(90))) //park
                 .setTangent(Math.toRadians(-90))
-                .splineToSplineHeading(new Pose2d(40,-55,Math.toRadians(90)),Math.toRadians(0));
-        TrajectoryActionBuilder waitTab = drive.actionBuilder(new Pose2d(40, -60, Math.toRadians(0)))
-                .waitSeconds(1)
-                .turnTo(Math.toRadians(0.1));
+                .splineToSplineHeading(new Pose2d(45,-55,Math.toRadians(90)),Math.toRadians(0));
 
         claw.closeClaw();
         intake_angle.RotatePosition1();
@@ -78,9 +72,6 @@ public class AUTON2025REDRIGHT_5 extends LinearOpMode {
         Action seventhTrajectory = tab7.build();
         Action eighthTrajectory = tab8.build();
         Action ninthTrajectory = tab9.build();
-        //Action tenthTrajectory = tab10.build();
-        //Action eleventhTrajectory = tab11.build();
-        Action waitSecond = waitTab.build();
 
 
 
@@ -99,8 +90,8 @@ public class AUTON2025REDRIGHT_5 extends LinearOpMode {
                         secondTrajectory,
                         //push colored samples
                         new ParallelAction(
-                                arm1.liftDown(),
-                                arm2.liftDown(),
+                                arm1.waitLiftDown(),
+                                arm2.waitLiftDown(),
                                 thirdTrajectory
                         ),
                         //face the wall for second specimen
