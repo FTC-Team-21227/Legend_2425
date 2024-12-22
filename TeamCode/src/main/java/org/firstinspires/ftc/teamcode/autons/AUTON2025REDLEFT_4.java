@@ -125,5 +125,6 @@ public class AUTON2025REDLEFT_4 extends LinearOpMode{
                         //         trajectoryActionCloseOut
                 )
         );
+        PoseStorage.currentPose = drive.pose;
     }
 }

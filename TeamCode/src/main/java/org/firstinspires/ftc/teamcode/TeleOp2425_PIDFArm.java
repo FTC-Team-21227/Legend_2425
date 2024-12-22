@@ -252,11 +252,11 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
         }
         if (gamepad1.a ) {//floor
             target1 = 2.6303;
-            target2 = 163.6641;
+            target2 = 164.6352;
         }
         if (gamepad1.b ) {//wall
             target1 = 12.0513;
-            target2 = 155.7743;
+            target2 = 154.1794; //155.7743
         }
         if (gamepad1.start) { //into submersible
             target1 = 4.85998565318;
@@ -378,7 +378,7 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
         float Motor_FWD_input;
         float Motor_Side_input;
 
-        if (!(gamepad1.left_bumper || gamepad1.right_bumper)) {
+        if (!(gamepad1.right_trigger>0.1 || gamepad1.right_bumper)) {
             Motor_FWD_input = gamepad1.left_stick_y;
             Motor_Side_input = -gamepad1.left_stick_x;
             Motor_fwd_power = Math.cos(Heading_Angle / 180 * Math.PI) * Motor_FWD_input - Math.sin(Heading_Angle / 180 * Math.PI) * Motor_Side_input;

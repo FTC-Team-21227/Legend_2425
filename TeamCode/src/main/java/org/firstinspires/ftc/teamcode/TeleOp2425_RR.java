@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.Rotation2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -19,18 +20,26 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.autons.AUTON2025REDRIGHT_8;
+import org.firstinspires.ftc.teamcode.autons.AUTON2025REDLEFT_4;
+import org.firstinspires.ftc.teamcode.autons.PoseStorage;
+
+
+import java.util.Objects;
 
 //@Config
-@TeleOp(name = "TeleOp2425_RR")
+@TeleOp(name = "TeleOp2425_RR_NoCalibration")
 public class TeleOp2425_RR extends LinearOpMode {
     //PID controllers for ARM1 and ARM2
     private PIDController controller1;
     private PIDController controller2;
+    private PIDController headingController;
     //PIDF gains
     double p1 = TunePID.p1, i1 = TunePID.i1, d1 = TunePID.d1;
     double f1 = TunePID.f1;
     double p2 = TunePID.p2, i2 = TunePID.i2, d2 = TunePID.d2;
     double f2 = TunePID.f2;
+    double p, i, d;
     //ARM1, ARM2 target positions, in degrees
     double target1 = 0;
     double target2 = 0;
@@ -47,7 +56,7 @@ public class TeleOp2425_RR extends LinearOpMode {
 //    private DcMotor W_BR;
 //    private DcMotor W_FR;
 //    private DcMotor W_FL;
-    private IMU imu;
+    //private IMU imu;
     private DcMotor ARM1; //bottom arm
     private DcMotor ARM2; //top arm
     private CRServo Hook;
@@ -58,7 +67,7 @@ public class TeleOp2425_RR extends LinearOpMode {
 
     float Heading_Angle;
     double Motor_power_BR;
-    Orientation Direction;
+    //Orientation Direction;
     int imu_rotation;
     double Motor_power_BL;
     float Targeting_Angle;
@@ -69,11 +78,12 @@ public class TeleOp2425_RR extends LinearOpMode {
     double Motor_Rotation_power;
     double Motor_Power;
     double tim;
-    boolean ARM1calibrated = false;
-    boolean ARM2calibrated = false;
+    boolean ARM1calibrated = true;
+    boolean ARM2calibrated = true;
     boolean hanging = false;
     int arm1Pos;
     int arm2Pos;
+    double currHeading;
     /**
      * This function is executed when this Op Mode is selected from the Driver Station.
      */
@@ -81,8 +91,18 @@ public class TeleOp2425_RR extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException{
         //getting all the motors, servos, and sensors from the hardware map
-        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-        imu = hardwareMap.get(IMU.class, "imu");
+        Pose2d initialPose;
+        try {
+            initialPose = PoseStorage.currentPose;
+            telemetry.addData("Yay1!","Yay1!");
+        }
+        catch (Exception e){
+            initialPose = new Pose2d(0,0,0);
+            telemetry.addData("No!","No!");
+        }
+        telemetry.update();
+        //System.out.println(initialPose);
+        MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
         ARM1 = hardwareMap.get(DcMotor.class, "ARM1");
         ARM2 = hardwareMap.get(DcMotor.class, "ARM2");
         Hook = hardwareMap.get(CRServo.class, "Hook");
@@ -95,19 +115,43 @@ public class TeleOp2425_RR extends LinearOpMode {
         Initialization();
         if (opModeIsActive()) {
             //recalibrating ARM1 and ARM2 motors during TeleOp
-            ARM1.setPower(-0.2);
-            ARM2.setPower(-0.2);
+//            ARM1.setPower(-0.2);
+//            ARM2.setPower(-0.2);
             // Put run blocks here.
             while (opModeIsActive()) {
                 // Put loop blocks here.
                 //set power to each wheel motor
-                drive.setDrivePowers(new PoseVelocity2d(
-                        new Vector2d(
-                                -gamepad1.left_stick_y,
-                                -gamepad1.left_stick_x
-                        ),
-                        -gamepad1.right_stick_x
-                ));
+//                double heading = drive.pose.heading.toDouble();
+//                double [][] mat = {{Math.cos(heading),-Math.sin(heading)},
+//                                   {Math.sin(heading),Math.cos(heading)}};
+                //field centric drive??
+                Rotation2d inverseHeading = drive.pose.heading.inverse();
+                double x = -gamepad1.left_stick_x;
+                double y = -gamepad1.left_stick_y;
+                double mag = Math.sqrt(x*x+y*y);
+                if (!(gamepad1.right_bumper || (gamepad1.right_trigger > 0.1))) {
+                    if (Math.abs(gamepad1.right_stick_x)>0.1) {
+                        drive.setDrivePowers(new PoseVelocity2d(
+                                inverseHeading.times(new Vector2d(
+                                        x * mag,
+                                        y * mag
+                                )),
+                                -gamepad1.right_stick_x
+                        ));
+                        currHeading = drive.pose.heading.toDouble();
+                    }
+                    else{
+                        double rotPower = headingController.calculate(drive.pose.heading.toDouble(), currHeading);
+                        drive.setDrivePowers(new PoseVelocity2d(
+                                inverseHeading.times(new Vector2d(
+                                        x * mag,
+                                        y * mag
+                                )),
+                                rotPower
+                        ));
+                    }
+                }
+                drive.updatePoseEstimate();
                 //controls the arm motor powers
                 if (!(ARM1calibrated && ARM2calibrated)) {
                     ARM_Calibration(); //calibration function
@@ -123,20 +167,14 @@ public class TeleOp2425_RR extends LinearOpMode {
                 //reset imu if necessary
                 if (gamepad1.back) {
                     //imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD)));
-                    imu.resetYaw();
+                    initialPose = new Pose2d(new Vector2d(drive.pose.position.x,drive.pose.position.y),Math.toRadians(0));
                 }
                 //        telemetry.addData("ARM1Calibrated",ARM1calibrated);
                 //        telemetry.addData("ARM2Calibrated", ARM2calibrated);
                 //        telemetry.addData("where am i going", !(ARM1calibrated && ARM2calibrated));
-                telemetry.addData("Direction", Direction.firstAngle);
-                telemetry.addData("Motor Power", Motor_Power);
-                telemetry.addData("Side Power", Motor_side_power);
-                telemetry.addData("FWD Power", Motor_fwd_power);
-                telemetry.addData("IMU_Rotation Power", imu_rotation);
-                telemetry.addData("Rotation Power", Motor_Rotation_power);
-//                telemetry.addData("ODO_Left", W_FL.getCurrentPosition());
-//                telemetry.addData("ODO_Right", W_FR.getCurrentPosition());
-//                telemetry.addData("ODO_Center", W_BR.getCurrentPosition());
+                telemetry.addData("x", drive.pose.position.x);
+                telemetry.addData("y", drive.pose.position.y);
+                telemetry.addData("heading (deg)", Math.toDegrees(drive.pose.heading.toDouble()));
                 telemetry.addData("ARM1Pos: ", arm1Pos/ticks_in_degree_1);
                 telemetry.addData("ARM1Target: ", target1);
                 telemetry.addData("ARM2 Current Angle: ", arm2Pos/ticks_in_degree_2);
@@ -300,6 +338,7 @@ public class TeleOp2425_RR extends LinearOpMode {
 
         controller1 = new PIDController(p1, i1, d1);
         controller2 = new PIDController(p2, i2, d2);
+        headingController = new PIDController(p, i, d);
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -321,9 +360,11 @@ public class TeleOp2425_RR extends LinearOpMode {
 //        W_BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Intake_Angle.scaleRange(0.65, 0.98);
         ARM1.setDirection(DcMotor.Direction.REVERSE);
+        ARM1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         ARM1.setPower(0);
         target1 = ARM1.getCurrentPosition();
         ARM2.setDirection(DcMotor.Direction.REVERSE);
+        ARM1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         ARM2.setPower(0);
         target2 = ARM2.getCurrentPosition();
         telemetry.addData("Claw",Claw.getPosition());
@@ -347,30 +388,30 @@ public class TeleOp2425_RR extends LinearOpMode {
     /**
      * Describe this function...
      */
-    private void Calculate_IMU_Rotation_Power() {
-        double Angle_Difference;
-
-        Direction = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        Heading_Angle = Direction.firstAngle;
-        if (Math.abs(gamepad1.right_stick_x) >= 0.01) {
-            imu_rotation = 0;
-            Targeting_Angle = Heading_Angle;
-        } else {
-            Angle_Difference = Heading_Angle - Targeting_Angle;
-            if (Angle_Difference > 180) {
-                Angle_Difference = Angle_Difference - 360;
-            } else if (Angle_Difference < -180) {
-                Angle_Difference = Angle_Difference + 360;
-            }
-            if (Math.abs(Angle_Difference) < 1) {
-                imu_rotation = 0;
-            } else if (Angle_Difference >= 1) {
-                imu_rotation = (int) (Angle_Difference * 0.01 + 0.1);
-            } else {
-                imu_rotation = (int) (Angle_Difference * 0.01 - 0.1);
-            }
-        }
-    }
+//    private void Calculate_IMU_Rotation_Power() {
+//        double Angle_Difference;
+//
+//        Direction = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+//        Heading_Angle = Direction.firstAngle;
+//        if (Math.abs(gamepad1.right_stick_x) >= 0.01) {
+//            imu_rotation = 0;
+//            Targeting_Angle = Heading_Angle;
+//        } else {
+//            Angle_Difference = Heading_Angle - Targeting_Angle;
+//            if (Angle_Difference > 180) {
+//                Angle_Difference = Angle_Difference - 360;
+//            } else if (Angle_Difference < -180) {
+//                Angle_Difference = Angle_Difference + 360;
+//            }
+//            if (Math.abs(Angle_Difference) < 1) {
+//                imu_rotation = 0;
+//            } else if (Angle_Difference >= 1) {
+//                imu_rotation = (int) (Angle_Difference * 0.01 + 0.1);
+//            } else {
+//                imu_rotation = (int) (Angle_Difference * 0.01 - 0.1);
+//            }
+//        }
+//    }
 
     /**
      * Describe this function...

@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.Arclength;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Pose2dDual;
 import com.acmerobotics.roadrunner.PosePath;
+import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.VelConstraint;
 import com.noahbres.meepmeep.MeepMeep;
@@ -21,43 +22,93 @@ public class MeepMeepTesting2 {
                 .setConstraints(70, 60, Math.toRadians(180), Math.toRadians(180), 13.35)
                 .build();
         myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(15, -63.3, Math.toRadians(90)))
-                .strafeTo(new Vector2d(10,-41.3))
-                .setTangent(Math.toRadians(Math.toRadians(-30))) //improved, we want 1 s shape
-                .splineToConstantHeading(new Vector2d(40, -30),Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(45, -20),Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(50,-30),Math.toRadians(-90))
-                .splineToConstantHeading(new Vector2d(50, -50),Math.toRadians(-90)) //y value may need to be changed
-                .splineToConstantHeading(new Vector2d(50, -30),Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(56,-20),Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(62, -30),Math.toRadians(-90))
-                .splineToConstantHeading(new Vector2d(62, -50),Math.toRadians(-90))
-                .splineToSplineHeading(new Pose2d(62,-30,Math.toRadians(0)),Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(68,-20),Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(74,-30),Math.toRadians(-90))
-                .splineToConstantHeading(new Vector2d(74,-60),Math.toRadians(-90))
-                .setTangent(Math.toRadians(180))
-                .splineToConstantHeading(new Vector2d(30,-60),Math.toRadians(180))
-                .splineToConstantHeading(new Vector2d(40,-60),Math.toRadians(0))
-                .waitSeconds(1)
-                .setTangent(Math.toRadians(180))
-                .splineToSplineHeading(new Pose2d(5,-41.3,Math.toRadians(90)),Math.toRadians(90))
+                //.waitSeconds(0.5)
+                .setTangent(Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(10,-41.3),Math.toRadians(90))
                 .setTangent(Math.toRadians(-90))
-                .splineToSplineHeading(new Pose2d(40,-55,Math.toRadians(0)),Math.toRadians(0))
-                .waitSeconds(1)
-                .setTangent(Math.toRadians(180))
-                .splineToSplineHeading(new Pose2d(0,-41.3,Math.toRadians(90)),Math.toRadians(90))
+                //improved, we want 1 s shape
+                .splineTo(new Vector2d(10,-45),Math.toRadians(-90))
+                .splineToSplineHeading(new Pose2d(46.5, -20,Math.toRadians(-90)),Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(55, -15),Math.toRadians(-90)) //CHANGED: paths are now completely u's and continuous.
+                .splineToConstantHeading(new Vector2d(55, -50),Math.toRadians(-90)) //y value may need to be changed
+                //.setTangent(Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(55, -20),Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(63, -20),Math.toRadians(-90))
+                .splineToConstantHeading(new Vector2d(63, -50),Math.toRadians(-90))
+                //.setTangent(Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(63,-20),Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(72,-20),Math.toRadians(-90))
+                .splineToConstantHeading(new Vector2d(72,-50),Math.toRadians(-90))
+                .strafeTo(new Vector2d(72,-50.5),new TranslationalVelConstraint(10))
+                .waitSeconds(0.7) //CHANGED: reduced delay of movement (saves 1 s total)
+                .setTangent(Math.toRadians(180)) //CHANGED: diagonal initial tangent should make the robot follow a tighter curve.
+                .splineToLinearHeading(new Pose2d(5,-39.3,Math.toRadians(90)),Math.toRadians(90))
                 .setTangent(Math.toRadians(-90))
-                .splineToSplineHeading(new Pose2d(40,-55,Math.toRadians(0)),Math.toRadians(0))
-                .waitSeconds(1)
-                .setTangent(Math.toRadians(180))
-                .splineToSplineHeading(new Pose2d(-5,-41.3,Math.toRadians(90)),Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(30,-60,Math.toRadians(0)),Math.toRadians(0)) //CHANGED: robot returns to the wall at an angle as well.
+                .splineToConstantHeading(new Vector2d(44.5,-60),Math.toRadians(0),new TranslationalVelConstraint(10))
+                .waitSeconds(0.7)
+                .setTangent(Math.toRadians(140))
+                .splineToLinearHeading(new Pose2d(2,-39.3,Math.toRadians(90)),Math.toRadians(90))
                 .setTangent(Math.toRadians(-90))
-                .splineToSplineHeading(new Pose2d(40,-55,Math.toRadians(0)),Math.toRadians(0))
-                .waitSeconds(1)
-                .setTangent(Math.toRadians(180))
-                .splineToSplineHeading(new Pose2d(-10,-41.3,Math.toRadians(90)),Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(30,-60,Math.toRadians(0)),Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(44.5,-60),Math.toRadians(0),new TranslationalVelConstraint(10))
+                .waitSeconds(0.7)
+                .setTangent(Math.toRadians(140))
+                .splineToLinearHeading(new Pose2d(0,-39.3,Math.toRadians(90)),Math.toRadians(90))
                 .setTangent(Math.toRadians(-90))
-                .splineToConstantHeading(new Vector2d(40,-55),Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(30,-60,Math.toRadians(0)),Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(44.5,-60),Math.toRadians(0),new TranslationalVelConstraint(10))
+                .waitSeconds(0.7)
+                .setTangent(Math.toRadians(140))
+                .splineToLinearHeading(new Pose2d(0,-39.3,Math.toRadians(90)),Math.toRadians(90))
+                .setTangent(Math.toRadians(-90))
+                .splineToConstantHeading(new Vector2d(45,-55),Math.toRadians(0))
+                .build());
+
+        RoadRunnerBotEntity myBot4 = new DefaultBotBuilder(meepMeep)
+                // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
+                .setConstraints(70, 60, Math.toRadians(180), Math.toRadians(180), 13.35)
+                .build();
+        myBot4.runAction(myBot4.getDrive().actionBuilder(new Pose2d(15, -63.3, Math.toRadians(90)))
+                //.waitSeconds(0.5)
+                .setTangent(Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(10,-41.3),Math.toRadians(90))
+                .setTangent(Math.toRadians(-90))
+                //improved, we want 1 s shape
+                .splineToConstantHeading(new Vector2d(10,-45),Math.toRadians(-90))
+                .splineToLinearHeading(new Pose2d(28, -40,Math.toRadians(30)),Math.toRadians(-90))
+                .splineToSplineHeading(new Pose2d(27,-48,Math.toRadians(0)),Math.toRadians(-90))
+                .splineToSplineHeading(new Pose2d(28,-56,Math.toRadians(-30)),Math.toRadians(-90))
+                .splineToLinearHeading(new Pose2d(36, -40,Math.toRadians(30)),Math.toRadians(-90))
+                .splineToSplineHeading(new Pose2d(35,-48,Math.toRadians(0)),Math.toRadians(-90))
+                .splineToSplineHeading(new Pose2d(36,-56,Math.toRadians(-30)),Math.toRadians(-90))
+                .splineToLinearHeading(new Pose2d(44, -40,Math.toRadians(30)),Math.toRadians(-90))
+                .splineToSplineHeading(new Pose2d(43,-48,Math.toRadians(0)),Math.toRadians(-90))
+                .splineToSplineHeading(new Pose2d(44,-66,Math.toRadians(0)),Math.toRadians(-90))
+                .strafeTo(new Vector2d(44.5,-66),new TranslationalVelConstraint(10))
+                .waitSeconds(0.7) //CHANGED: reduced delay of movement (saves 1 s total)
+                .setTangent(Math.toRadians(140)) //CHANGED: diagonal initial tangent should make the robot follow a tighter curve.
+                .splineToLinearHeading(new Pose2d(5,-39.3,Math.toRadians(90)),Math.toRadians(90))
+                .setTangent(Math.toRadians(-90))
+                .splineToLinearHeading(new Pose2d(30,-60,Math.toRadians(0)),Math.toRadians(0)) //CHANGED: robot returns to the wall at an angle as well.
+                .splineToConstantHeading(new Vector2d(44.5,-60),Math.toRadians(0),new TranslationalVelConstraint(10))
+                .waitSeconds(0.7)
+                .setTangent(Math.toRadians(140))
+                .splineToLinearHeading(new Pose2d(2,-39.3,Math.toRadians(90)),Math.toRadians(90))
+                .setTangent(Math.toRadians(-90))
+                .splineToLinearHeading(new Pose2d(30,-60,Math.toRadians(0)),Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(44.5,-60),Math.toRadians(0),new TranslationalVelConstraint(10))
+                .waitSeconds(0.7)
+                .setTangent(Math.toRadians(140))
+                .splineToLinearHeading(new Pose2d(0,-39.3,Math.toRadians(90)),Math.toRadians(90))
+                .setTangent(Math.toRadians(-90))
+                .splineToLinearHeading(new Pose2d(30,-60,Math.toRadians(0)),Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(44.5,-60),Math.toRadians(0),new TranslationalVelConstraint(10))
+                .waitSeconds(0.7)
+                .setTangent(Math.toRadians(140))
+                .splineToLinearHeading(new Pose2d(0,-39.3,Math.toRadians(90)),Math.toRadians(90))
+                .setTangent(Math.toRadians(-90))
+                .splineToConstantHeading(new Vector2d(45,-55),Math.toRadians(0))
                 .build());
 
         RoadRunnerBotEntity myBot3 = new DefaultBotBuilder(meepMeep)
@@ -153,8 +204,9 @@ public class MeepMeepTesting2 {
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
                 .addEntity(myBot)
-                .addEntity(myBot2)
-                .addEntity(myBot3)
+                .addEntity(myBot4)
+                //.addEntity(myBot2)
+                //.addEntity(myBot3)
                 .start();
     }
 }

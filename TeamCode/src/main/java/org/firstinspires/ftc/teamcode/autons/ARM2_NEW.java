@@ -18,7 +18,7 @@ public class ARM2_NEW {
     //PIDF gains
     double p2 = TunePID.p2, i2 = TunePID.i2, d2 = TunePID.d2;
     double f2 = TunePID.f2;
-    //ticks to degrees conversion, very useful
+    //ticks to degrees conversion
     private final double ticks_in_degree_2 = 11.2855555556;
     //length, COM, mass values for feedforward calculation (not even performed in arm2)
     private final double L1 = 43.2;
@@ -27,10 +27,6 @@ public class ARM2_NEW {
     private final double x2 = 26.4;
     private final double m1 = 810;
     private final double m2 = 99.79;
-
-//    public static double getTarget2() {
-//        return target2;
-//    }
 
     public ARM2_NEW(HardwareMap hardwareMap) {
         arm2 = hardwareMap.get(DcMotor.class, "ARM2");
@@ -44,9 +40,16 @@ public class ARM2_NEW {
         ElapsedTime time = new ElapsedTime();
         boolean start;
         double target2;
+        double runTime;
         public LiftTarget(double pos) {
             target2 = pos;
             start = false;
+            runTime = 2;
+        }
+        public LiftTarget(double pos, double runtime) {
+            target2 = pos;
+            start = false;
+            runTime = runtime;
         }
         public double ARM_Control_PID() {
 //            double target1 = ARM1_NEW.getTarget1();
@@ -58,6 +61,7 @@ public class ARM2_NEW {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
             if (!start) {
+                PoseStorage.target2 = target2; //NEW
                 time.reset();
                 start = true;
             }
@@ -65,7 +69,7 @@ public class ARM2_NEW {
             packet.addLine("arm2pos:"+(arm2.getCurrentPosition()));
             packet.addLine("target2pos:"+target2);
             packet.addLine("target2pos:"+(int)(target2*ticks_in_degree_2));
-            if (time.seconds() < 2) {
+            if (time.seconds() < runTime) {
                 packet.addLine("still running 2");
                 double power = ARM_Control_PID();
                 packet.addLine("power2:"+power);
@@ -79,25 +83,44 @@ public class ARM2_NEW {
     }
     public Action liftHighBasket() {return new LiftTarget(180.492048747);}
     public Action liftRung() {return new LiftTarget(95.3431);}
-    public Action liftWall() {return new LiftTarget(155.7743);}
+    public Action liftWall() {return new LiftTarget(154.1794);}
     public Action liftLowBasket() {return new LiftTarget(50);} //not tested i think
-    public Action liftFloor() {return new LiftTarget(163.6641);}
+    public Action liftFloor() {return new LiftTarget(164.6352);}
     public Action liftDown() {return new LiftTarget(5.0199819357);}
+    public Action liftHighBasket(double seconds) {return new LiftTarget(180.492048747, seconds);}
+    public Action liftRung(double seconds) {return new LiftTarget(95.3431, seconds);}
+    public Action liftWall(double seconds) {return new LiftTarget(154.1794, seconds);}
+    public Action liftLowBasket(double seconds) {return new LiftTarget(50, seconds);} //not tested i think
+    public Action liftFloor(double seconds) {return new LiftTarget(164.6352, seconds);}
+    public Action liftDown(double seconds) {return new LiftTarget(5.0199819357, seconds);}
 
     public class waitLiftTarget implements Action {
         ElapsedTime time = new ElapsedTime();
         boolean start;
+        boolean startMove;
         double target2;
         double waitTime;
+        double runTime;
         public waitLiftTarget(double pos) {
             target2 = pos;
             start = false;
+            startMove = false;
             waitTime = 1;
+            runTime = 2;
         }
         public waitLiftTarget(double pos, double tim) {
             target2 = pos;
             start = false;
+            startMove = false;
             waitTime = tim;
+            runTime = 2;
+        }
+        public waitLiftTarget(double pos, double tim, double runtime) {
+            target2 = pos;
+            start = false;
+            startMove = false;
+            waitTime = tim;
+            runTime = runtime;
         }
         public double ARM_Control_PID() {
 //            double target1 = ARM1_NEW.getTarget1();
@@ -116,9 +139,15 @@ public class ARM2_NEW {
             packet.addLine("arm2pos:"+(arm2.getCurrentPosition()));
             packet.addLine("target2pos:"+target2);
             packet.addLine("target2pos:"+(int)(target2*ticks_in_degree_2));
-            if (time.seconds() < 2+waitTime) {
+            if (time.seconds() < runTime+waitTime) {
                 packet.addLine("still running 2");
                 if (time.seconds()>waitTime){
+                    //NEW
+                    if (!startMove){
+                        PoseStorage.target2 = target2;
+                        startMove = true;
+                    }
+                    //
                     double power = ARM_Control_PID();
                     packet.addLine("power2:"+power);
                     arm2.setPower(power);}
@@ -134,14 +163,20 @@ public class ARM2_NEW {
     }
     public Action waitLiftHighBasket() {return new waitLiftTarget(180.492048747);}
     public Action waitLiftRung() {return new waitLiftTarget(95.3431);}
-    public Action waitLiftWall() {return new waitLiftTarget(155.7743);}
+    public Action waitLiftWall() {return new waitLiftTarget(154.1794);}
     public Action waitLiftLowBasket() {return new waitLiftTarget(50);} //not tested i think
-    public Action waitLiftFloor() {return new waitLiftTarget(163.6641);}
+    public Action waitLiftFloor() {return new waitLiftTarget(164.6352);}
     public Action waitLiftDown() {return new waitLiftTarget(5.0199819357);}
-    public Action waitLiftHighBasket(double seconds) {return new waitLiftTarget(180.492048747,seconds);}
-    public Action waitLiftRung(double seconds) {return new waitLiftTarget(95.3431,seconds);}
-    public Action waitLiftWall(double seconds) {return new waitLiftTarget(155.7743,seconds);}
-    public Action waitLiftLowBasket(double seconds) {return new waitLiftTarget(50,seconds);} //not tested i think
-    public Action waitLiftFloor(double seconds) {return new waitLiftTarget(163.6641,seconds);}
-    public Action waitLiftDown(double seconds) {return new waitLiftTarget(5.0199819357,seconds);}
+    public Action waitLiftHighBasket(double waitseconds) {return new waitLiftTarget(180.492048747,waitseconds);}
+    public Action waitLiftRung(double waitseconds) {return new waitLiftTarget(95.3431,waitseconds);}
+    public Action waitLiftWall(double waitseconds) {return new waitLiftTarget(154.1794,waitseconds);}
+    public Action waitLiftLowBasket(double waitseconds) {return new waitLiftTarget(50,waitseconds);} //not tested i think
+    public Action waitLiftFloor(double waitseconds) {return new waitLiftTarget(164.6352,waitseconds);}
+    public Action waitLiftDown(double waitseconds) {return new waitLiftTarget(5.0199819357,waitseconds);}
+    public Action waitLiftHighBasket(double waitseconds, double seconds) {return new waitLiftTarget(180.492048747,waitseconds,seconds);}
+    public Action waitLiftRung(double waitseconds, double seconds) {return new waitLiftTarget(95.3431,waitseconds,seconds);}
+    public Action waitLiftWall(double waitseconds, double seconds) {return new waitLiftTarget(154.1794,waitseconds,seconds);}
+    public Action waitLiftLowBasket(double waitseconds, double seconds) {return new waitLiftTarget(50,waitseconds,seconds);} //not tested i think
+    public Action waitLiftFloor(double waitseconds, double seconds) {return new waitLiftTarget(164.6352,waitseconds,seconds);}
+    public Action waitLiftDown(double waitseconds, double seconds) {return new waitLiftTarget(5.0199819357,waitseconds,seconds);}
 }
