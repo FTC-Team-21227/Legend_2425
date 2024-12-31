@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -17,10 +17,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.TunePID;
+import org.firstinspires.ftc.teamcode.autons.PoseStorage;
 
 //@Config
-@TeleOp(name = "TeleOp2425_PIDFArm")
-public class TeleOp2425_PIDFArm extends LinearOpMode {
+@TeleOp(name = "TeleOp2425_NoCal")
+//Most recent teleop for the old robot with no calibrations
+public class TeleOp2425_NoCal extends LinearOpMode {
     //PID controllers for ARM1 and ARM2
     private PIDController controller1;
     private PIDController controller2;
@@ -54,12 +57,12 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
     private TouchSensor ARM1Sensor;
     private TouchSensor ARM2Sensor;
 
-    float Heading_Angle;
+    double Heading_Angle;
     double Motor_power_BR;
     Orientation Direction;
     int imu_rotation;
     double Motor_power_BL;
-    float Targeting_Angle;
+    double Targeting_Angle;
     double Motor_fwd_power;
     double Motor_power_FL;
     double Motor_side_power;
@@ -67,17 +70,30 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
     double Motor_Rotation_power;
     double Motor_Power;
     double tim;
-    boolean ARM1calibrated = false;
-    boolean ARM2calibrated = false;
+    boolean ARM1calibrated = true;
+    boolean ARM2calibrated = true;
     boolean hanging = false;
     int arm1Pos;
     int arm2Pos;
+    double initialHeading;
     /**
      * This function is executed when this Op Mode is selected from the Driver Station.
      */
     @Override
     public void runOpMode() throws InterruptedException{
         //getting all the motors, servos, and sensors from the hardware map
+//        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        Pose2d initialPose;
+        try {
+            initialPose = PoseStorage.currentPose;
+            telemetry.addData("Yay1!","Yay1!");
+        }
+        catch (Exception e){
+            initialPose = new Pose2d(0,0,0);
+            telemetry.addData("No!","No!");
+        }
+        telemetry.update();
+        initialHeading = Math.toDegrees(initialPose.heading.toDouble());
         W_BL = hardwareMap.get(DcMotor.class, "W_BL");
         W_BR = hardwareMap.get(DcMotor.class, "W_BR");
         W_FR = hardwareMap.get(DcMotor.class, "W_FR");
@@ -94,9 +110,6 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
         // Put initialization blocks here.
         Initialization();
         if (opModeIsActive()) {
-            //recalibrating ARM1 and ARM2 motors during TeleOp
-            ARM1.setPower(-0.2);
-            ARM2.setPower(-0.2);
             // Put run blocks here.
             while (opModeIsActive()) {
                 // Put loop blocks here.
@@ -123,11 +136,13 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
                 if (gamepad1.back) {
                     imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD)));
                     imu.resetYaw();
+                    Heading_Angle = 0;
+                    Targeting_Angle = 0;
                 }
                 //        telemetry.addData("ARM1Calibrated",ARM1calibrated);
                 //        telemetry.addData("ARM2Calibrated", ARM2calibrated);
                 //        telemetry.addData("where am i going", !(ARM1calibrated && ARM2calibrated));
-                telemetry.addData("Direction", Direction.firstAngle);
+                telemetry.addData("Direction", Heading_Angle);
                 telemetry.addData("Motor Power", Motor_Power);
                 telemetry.addData("Side Power", Motor_side_power);
                 telemetry.addData("FWD Power", Motor_fwd_power);
@@ -300,8 +315,6 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
         controller1 = new PIDController(p1, i1, d1);
         controller2 = new PIDController(p2, i2, d2);
 
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
         W_FR.setDirection(DcMotor.Direction.REVERSE);
         W_FL.setDirection(DcMotor.Direction.REVERSE);
         W_BR.setDirection(DcMotor.Direction.FORWARD);
@@ -320,13 +333,15 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
         W_BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Intake_Angle.scaleRange(0.65, 0.98);
         ARM1.setDirection(DcMotor.Direction.REVERSE);
+        ARM1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         ARM1.setPower(0);
         target1 = ARM1.getCurrentPosition()/ticks_in_degree_1;
         ARM2.setDirection(DcMotor.Direction.REVERSE);
+        ARM1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         ARM2.setPower(0);
         target2 = ARM2.getCurrentPosition()/ticks_in_degree_2;
         telemetry.addData("Claw",Claw.getPosition());
-        telemetry.update();
+//        telemetry.update();
         Claw.scaleRange(0.2,0.8);
 
 
@@ -375,12 +390,14 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
      * Describe this function...
      */
     private void Calculate_Motor_Power() {
-        float Motor_FWD_input;
-        float Motor_Side_input;
+        double Motor_FWD_input;
+        double Motor_Side_input;
+        double mag;
 
         if (!(gamepad1.right_trigger>0.1 || gamepad1.right_bumper)) {
-            Motor_FWD_input = gamepad1.left_stick_y;
-            Motor_Side_input = -gamepad1.left_stick_x;
+            mag = Math.sqrt(gamepad1.left_stick_y*gamepad1.left_stick_y + gamepad1.left_stick_x*gamepad1.left_stick_x);
+            Motor_FWD_input = gamepad1.left_stick_y * mag;
+            Motor_Side_input = -gamepad1.left_stick_x * mag;
             Motor_fwd_power = Math.cos(Heading_Angle / 180 * Math.PI) * Motor_FWD_input - Math.sin(Heading_Angle / 180 * Math.PI) * Motor_Side_input;
             Motor_side_power = (Math.cos(Heading_Angle / 180 * Math.PI) * Motor_Side_input + Math.sin(Heading_Angle / 180 * Math.PI) * Motor_FWD_input) * 1.5;
             Motor_Rotation_power = gamepad1.right_stick_x * 0.7 + imu_rotation;

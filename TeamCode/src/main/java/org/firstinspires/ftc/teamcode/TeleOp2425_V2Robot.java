@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -17,10 +17,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.autons.PoseStorage;
 
-//@Config
-@TeleOp(name = "TeleOp2425_PIDFArm")
-public class TeleOp2425_PIDFArm extends LinearOpMode {
+@TeleOp(name = "TeleOp2425_V2Robot")
+public class TeleOp2425_V2Robot extends LinearOpMode {
     //PID controllers for ARM1 and ARM2
     private PIDController controller1;
     private PIDController controller2;
@@ -51,15 +51,16 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
     private CRServo Hook;
     private Servo Intake_Angle;
     private Servo Claw;
+    private Servo Claw_Angle;
     private TouchSensor ARM1Sensor;
     private TouchSensor ARM2Sensor;
 
-    float Heading_Angle;
+    double Heading_Angle;
     double Motor_power_BR;
     Orientation Direction;
     int imu_rotation;
     double Motor_power_BL;
-    float Targeting_Angle;
+    double Targeting_Angle;
     double Motor_fwd_power;
     double Motor_power_FL;
     double Motor_side_power;
@@ -67,17 +68,39 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
     double Motor_Rotation_power;
     double Motor_Power;
     double tim;
-    boolean ARM1calibrated = false;
-    boolean ARM2calibrated = false;
+    boolean ARM1calibrated = true;
+    boolean ARM2calibrated = true;
     boolean hanging = false;
     int arm1Pos;
     int arm2Pos;
+    double initialHeading;
+    String state = "a";
+    double stateTime;
+    boolean manual = false;
+    boolean rightTriggerPressed = false;
+    boolean leftTriggerPressed = false;
+    boolean rightBumperPressed = false;
+    boolean hookUp = false;
+    boolean hookDown = false;
+    int claw = 0;
+    int claw_angle = 0;
+    int intake_angle = 0;
     /**
      * This function is executed when this Op Mode is selected from the Driver Station.
      */
     @Override
     public void runOpMode() throws InterruptedException{
         //getting all the motors, servos, and sensors from the hardware map
+        Pose2d initialPose;
+        try {
+            initialPose = PoseStorage.currentPose;
+            telemetry.addData("Yay1!","Yay1!");
+        }
+        catch (Exception e){
+            initialPose = new Pose2d(0,0,0);
+            telemetry.addData("No!","No!");
+        }
+        initialHeading = Math.toDegrees(initialPose.heading.toDouble());
         W_BL = hardwareMap.get(DcMotor.class, "W_BL");
         W_BR = hardwareMap.get(DcMotor.class, "W_BR");
         W_FR = hardwareMap.get(DcMotor.class, "W_FR");
@@ -88,15 +111,16 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
         Hook = hardwareMap.get(CRServo.class, "Hook");
         Claw = hardwareMap.get(Servo.class, "Claw");
         Intake_Angle = hardwareMap.get(Servo.class,"Intake_Angle");
-        ARM1Sensor = hardwareMap.get(TouchSensor.class, "ARM1Sensor");
-        ARM2Sensor = hardwareMap.get(TouchSensor.class, "ARM2Sensor");
+        Claw_Angle = hardwareMap.get(Servo.class,"Claw_Angle");
+//        ARM1Sensor = hardwareMap.get(TouchSensor.class, "ARM1Sensor");
+//        ARM2Sensor = hardwareMap.get(TouchSensor.class, "ARM2Sensor");
 
         // Put initialization blocks here.
         Initialization();
         if (opModeIsActive()) {
-            //recalibrating ARM1 and ARM2 motors during TeleOp
-            ARM1.setPower(-0.2);
-            ARM2.setPower(-0.2);
+            Intake_Angle.setPosition(1);
+            Claw_Angle.setPosition(0.5);
+            Claw.setPosition(0);
             // Put run blocks here.
             while (opModeIsActive()) {
                 // Put loop blocks here.
@@ -109,25 +133,31 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
                 W_FL.setPower(Motor_power_FL);
                 //controls the arm motor powers
                 if (!(ARM1calibrated && ARM2calibrated)) {
-                    ARM_Calibration(); //calibration function
+//                    ARM_Calibration(); //calibration function
                 }
                 else {
                     ARM_SetTargets(); //gamepad presets and other things to set the target positions for each arm motor
                     ARM_PID_Control(); //PID control function based on target positions
                 }
-                //controls the intake servos
+                //automatic servo control based on presets, test if can be overridden
+                if (!manual) {
+                    Control_Servo_States();
+                }
+                //controls the intake servos manually
                 Intake_Control();
                 //controls the hook servo
                 Hook_Control();
                 //reset imu if necessary
                 if (gamepad1.back) {
-                    imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD)));
+//                    imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD)));
                     imu.resetYaw();
+                    Targeting_Angle = 0;
+                    Heading_Angle = 0;
                 }
                 //        telemetry.addData("ARM1Calibrated",ARM1calibrated);
                 //        telemetry.addData("ARM2Calibrated", ARM2calibrated);
                 //        telemetry.addData("where am i going", !(ARM1calibrated && ARM2calibrated));
-                telemetry.addData("Direction", Direction.firstAngle);
+                telemetry.addData("Direction", Heading_Angle);
                 telemetry.addData("Motor Power", Motor_Power);
                 telemetry.addData("Side Power", Motor_side_power);
                 telemetry.addData("FWD Power", Motor_fwd_power);
@@ -140,40 +170,94 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
                 telemetry.addData("ARM1Target: ", target1);
                 telemetry.addData("ARM2 Current Angle: ", arm2Pos/ticks_in_degree_2);
                 telemetry.addData("ARM2 Target Angle: ", target2);
-                telemetry.addData("ARM1 Pressed:",ARM1Sensor.isPressed());
-                telemetry.addData("ARM2 Pressed:",ARM2Sensor.isPressed());
+//                telemetry.addData("ARM1 Pressed:",ARM1Sensor.isPressed());
+//                telemetry.addData("ARM2 Pressed:",ARM2Sensor.isPressed());
                 telemetry.addData("Claw", Claw.getPosition());
                 telemetry.addData("Intake angle", Intake_Angle.getPosition());
                 telemetry.addData("ARM1 Power", ARM1.getPower());
                 telemetry.addData("ARM2 Power", ARM2.getPower());
-
+                telemetry.addData("Manual servo", manual);
+                telemetry.addData("State time", stateTime);
+                telemetry.addData("Run time", getRuntime());
 
                 telemetry.update();
             }
         }
     }
-    private void Intake_Control(){
-        if (gamepad1.left_bumper) {
-            Intake_Angle.setPosition(0); //forward
-        }
-        if (gamepad1.left_trigger > 0.1) {
-            Intake_Angle.setPosition(1); //right
-        }
-        if (gamepad1.right_bumper) {
-            Claw.setPosition(0); //close
-        }
-        if (gamepad1.right_trigger > 0.1) {
-            Claw.setPosition(1); //open
+    private void Control_Servo_States(){
+        switch (state){
+            case "highBasket": //Intake Angle 0, swivel Claw Angle to face the basket
+                if (getRuntime() - stateTime > 0.5) {
+                    if (Intake_Angle.getPosition() != 0) {
+                        Intake_Angle.setPosition(0);
+                    }
+                    if (Math.abs(Heading_Angle + 45) < 15 && Claw_Angle.getPosition() != 1) {
+                        Claw_Angle.setPosition(1);
+                    } else if (Math.abs(Heading_Angle - 135) < 15 && Claw_Angle.getPosition() != 0) {
+                        Claw_Angle.setPosition(0);
+                    }
+                    telemetry.addData("In high basket", "yes");
+                }
+            case "highRung": //Intake Angle 0, Claw Angle 0
+                if (getRuntime() - stateTime > 0.5){
+                    if (Intake_Angle.getPosition() != 0){
+                        Intake_Angle.setPosition(0);
+                    }
+                    if (Claw_Angle.getPosition() != 0){
+                        Claw_Angle.setPosition(0);
+                    }
+                }
+            case "wall":
+                if (getRuntime() - stateTime > 0.5){
+                    if (Intake_Angle.getPosition() != 0){
+                        Intake_Angle.setPosition(0);
+                    }
+                    if (Claw_Angle.getPosition() != 0){
+                        Claw_Angle.setPosition(0);
+                    }
+                }
+            case "enterSub":
+                if (getRuntime() - stateTime > 0.5){
+                    if (Intake_Angle.getPosition() != 0){
+                        Intake_Angle.setPosition(0);
+                    }
+                    if (Claw_Angle.getPosition() != 0){
+                        Claw_Angle.setPosition(0);
+                    }
+                }
+            case "a":
         }
     }
+    private void Intake_Control(){
+        if (gamepad1.right_trigger > 0.1 && !rightTriggerPressed) {
+            claw = 1 - claw;
+            Claw.setPosition(claw);
+//            manual = true;
+        }
+        rightTriggerPressed = gamepad1.right_trigger > 0.1;
+        if (gamepad1.left_trigger > 0.1 && !leftTriggerPressed) {
+            intake_angle = 1 - intake_angle;
+            Intake_Angle.setPosition(intake_angle);
+            manual = true;
+        }
+        leftTriggerPressed = gamepad1.left_trigger > 0.1;
+        if (gamepad1.right_bumper && !rightBumperPressed) {
+            claw_angle = 1 - claw_angle;
+            Claw_Angle.setPosition(claw_angle);
+            manual = true;
+        }
+        rightBumperPressed = gamepad1.right_bumper;
+    }
     private void Hook_Control(){
-        if (gamepad2.right_bumper) { //down?
+        if (gamepad2.right_bumper || hookDown) { //down?
             tim = getRuntime();
             Hook.setPower(0.5);
+            hookDown = false;
         }
-        if (gamepad2.left_bumper) { //up?
+        if (gamepad2.left_bumper || hookUp) { //up?
             tim = getRuntime();
             Hook.setPower(-0.5);
+            hookUp = false;
         }
         if (getRuntime() > tim+1.5) {
             Hook.setPower(0);
@@ -234,33 +318,65 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
             target1 = 113.330920056;
             target2 = 191.742752;
             hanging = true;
+            hookUp = true;
         }
         if (gamepad2.b) { //hang
-            target1 = -6.38433539679; //might need to change this, doesn't make sense to lower it past 0.
+            target1 = 0; //might need to change this, doesn't make sense to lower it past 0.
             //ARM2 must be moved up manually.
+            Claw_Angle.setPosition(0);
             Intake_Angle.setPosition(1); //setting servos in here is bad practice, but it's fine
             Claw.setPosition(1);
             hanging = true;
+            hookDown = true;
         }
-        if (gamepad1.x) {//high rung
-            target1 = 3.4193;
-            target2 = 95.3431;
+        if (gamepad1.x && gamepad1.left_bumper){
+            target1 = 2.6781;
+            target2 = 91.2671;
         }
-        if (gamepad1.y) {//high bucket
-            target1 = 90.5763; //97.854286777
-            target2 = 169.4201; //180.492048747
+        else if (gamepad1.x) {//high rung
+            target1 = 2.6781;
+            target2 = 91.2671;
+            stateTime = getRuntime();
+            state = "highRung";
+            manual = false;
         }
-        if (gamepad1.a ) {//floor
-            target1 = 2.6303;
-            target2 = 164.6352;
+        if (gamepad1.y && gamepad1.left_bumper){
+            target1 = 97.854286777;
+            target2 = 152.673;
         }
-        if (gamepad1.b ) {//wall
-            target1 = 12.0513;
-            target2 = 154.1794; //155.7743
+        else if (gamepad1.y) {//high basket
+            target1 = 97.854286777;
+            target2 = 152.673;
+//            Targeting_Angle = -45+initialHeading; //(add this?)
+            stateTime = getRuntime();
+            state = "highBasket";
+            manual = false;
         }
-        if (gamepad1.start) { //into submersible
+        if (gamepad1.a) {//floor
+            target1 = 0.9086;
+            target2 = 158.4326;
+        }
+        if (gamepad1.b && gamepad1.left_bumper){
+            target1 = 15.0642;
+            target2 = 154.0908;
+        }
+        else if (gamepad1.b) {//wall
+            target1 = 15.0642;
+            target2 = 154.0908; //155.7743
+            stateTime = getRuntime();
+            state = "wall";
+            manual = false;
+        }
+        if (gamepad1.start && gamepad1.left_bumper){
             target1 = 4.85998565318;
             target2 = 154.721207477;
+        }
+        else if (gamepad1.start) { //into submersible (not needed bc wall preset)
+            target1 = 4.85998565318;
+            target2 = 154.721207477;
+            stateTime = getRuntime();
+            state = "enterSub";
+            manual = false;
         }
         if (gamepad1.right_stick_button){ //retract both arms
             target1 = 4.48338159887;
@@ -318,20 +434,23 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
         W_FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         W_BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         W_BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        Intake_Angle.scaleRange(0.65, 0.98);
+        Intake_Angle.scaleRange(0.3, 0.7);
         ARM1.setDirection(DcMotor.Direction.REVERSE);
+        ARM1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         ARM1.setPower(0);
         target1 = ARM1.getCurrentPosition()/ticks_in_degree_1;
         ARM2.setDirection(DcMotor.Direction.REVERSE);
+        ARM1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         ARM2.setPower(0);
         target2 = ARM2.getCurrentPosition()/ticks_in_degree_2;
         telemetry.addData("Claw",Claw.getPosition());
         telemetry.update();
-        Claw.scaleRange(0.2,0.8);
+        Claw.scaleRange(0.2,0.775);
+        Claw_Angle.scaleRange(0.04, 0.7);
 
 
         Motor_Power = 0.6;
-        Targeting_Angle = 0;
+        Targeting_Angle = initialHeading;
         Lift_Power = 0.3;
         // Initialize the IMU with non-default settings. To use this block,
         // plug one of the "new IMU.Parameters" blocks into the parameters socket.
@@ -375,12 +494,13 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
      * Describe this function...
      */
     private void Calculate_Motor_Power() {
-        float Motor_FWD_input;
-        float Motor_Side_input;
-
-        if (!(gamepad1.right_trigger>0.1 || gamepad1.right_bumper)) {
-            Motor_FWD_input = gamepad1.left_stick_y;
-            Motor_Side_input = -gamepad1.left_stick_x;
+        double Motor_FWD_input;
+        double Motor_Side_input;
+        double mag;
+        if (!(gamepad1.right_trigger>0.1)) {
+            mag = Math.sqrt(gamepad1.left_stick_y*gamepad1.left_stick_y + gamepad1.left_stick_x*gamepad1.left_stick_x);
+            Motor_FWD_input = gamepad1.left_stick_y * mag;
+            Motor_Side_input = -gamepad1.left_stick_x * mag;
             Motor_fwd_power = Math.cos(Heading_Angle / 180 * Math.PI) * Motor_FWD_input - Math.sin(Heading_Angle / 180 * Math.PI) * Motor_Side_input;
             Motor_side_power = (Math.cos(Heading_Angle / 180 * Math.PI) * Motor_Side_input + Math.sin(Heading_Angle / 180 * Math.PI) * Motor_FWD_input) * 1.5;
             Motor_Rotation_power = gamepad1.right_stick_x * 0.7 + imu_rotation;

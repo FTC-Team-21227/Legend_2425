@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.TunePID;
 
-public class ARM2_NEW {
+public class ARM2_V2Robot {
     private DcMotor arm2;
     //PID controllers for ARM1 and ARM2
     private PIDController controller2;
@@ -28,7 +28,7 @@ public class ARM2_NEW {
     private final double m1 = 810;
     private final double m2 = 99.79;
 
-    public ARM2_NEW(HardwareMap hardwareMap) {
+    public ARM2_V2Robot(HardwareMap hardwareMap) {
         arm2 = hardwareMap.get(DcMotor.class, "ARM2");
         arm2.setDirection(DcMotor.Direction.REVERSE); //CHANGE BACK TO DCMOTORSIMPLE IF SOMETHING DOESN'T WORK
         arm2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -80,17 +80,17 @@ public class ARM2_NEW {
             }
         }
     }
-    public Action liftHighBasket() {return new LiftTarget(169.4201);}
-    public Action liftRung() {return new LiftTarget(95.3431);}
-    public Action liftWall() {return new LiftTarget(154.1794);}
+    public Action liftHighBasket() {return new LiftTarget(152.673);}
+    public Action liftRung() {return new LiftTarget( 91.2671);}
+    public Action liftWall() {return new LiftTarget(154.0908);}
     public Action liftLowBasket() {return new LiftTarget(50);} //not tested i think
-    public Action liftFloor() {return new LiftTarget(164.6352);}
+    public Action liftFloor() {return new LiftTarget(158.4326);}
     public Action liftDown() {return new LiftTarget(5.0199819357);}
-    public Action liftHighBasket(double seconds) {return new LiftTarget(169.4201, seconds);}
-    public Action liftRung(double seconds) {return new LiftTarget(95.3431, seconds);}
-    public Action liftWall(double seconds) {return new LiftTarget(154.1794, seconds);}
+    public Action liftHighBasket(double seconds) {return new LiftTarget(152.673, seconds);}
+    public Action liftRung(double seconds) {return new LiftTarget(91.2671, seconds);}
+    public Action liftWall(double seconds) {return new LiftTarget(154.0908, seconds);}
     public Action liftLowBasket(double seconds) {return new LiftTarget(50, seconds);} //not tested i think
-    public Action liftFloor(double seconds) {return new LiftTarget(164.6352, seconds);}
+    public Action liftFloor(double seconds) {return new LiftTarget(158.4326, seconds);}
     public Action liftDown(double seconds) {return new LiftTarget(5.0199819357, seconds);}
 
     public class waitLiftTarget implements Action {
@@ -159,22 +159,22 @@ public class ARM2_NEW {
             }
         }
     }
-    public Action waitLiftHighBasket() {return new waitLiftTarget(169.4201);}
-    public Action waitLiftRung() {return new waitLiftTarget(95.3431);}
-    public Action waitLiftWall() {return new waitLiftTarget(154.1794);}
+    public Action waitLiftHighBasket() {return new waitLiftTarget(152.673);}
+    public Action waitLiftRung() {return new waitLiftTarget(91.2671);}
+    public Action waitLiftWall() {return new waitLiftTarget(154.0908);}
     public Action waitLiftLowBasket() {return new waitLiftTarget(50);} //not tested i think
-    public Action waitLiftFloor() {return new waitLiftTarget(164.6352);}
+    public Action waitLiftFloor() {return new waitLiftTarget(158.4326);}
     public Action waitLiftDown() {return new waitLiftTarget(5.0199819357);}
-    public Action waitLiftHighBasket(double waitseconds) {return new waitLiftTarget(169.4201,waitseconds);}
-    public Action waitLiftRung(double waitseconds) {return new waitLiftTarget(95.3431,waitseconds);}
-    public Action waitLiftWall(double waitseconds) {return new waitLiftTarget(154.1794,waitseconds);}
+    public Action waitLiftHighBasket(double waitseconds) {return new waitLiftTarget(152.673,waitseconds);}
+    public Action waitLiftRung(double waitseconds) {return new waitLiftTarget(91.2671,waitseconds);}
+    public Action waitLiftWall(double waitseconds) {return new waitLiftTarget(154.0908,waitseconds);}
     public Action waitLiftLowBasket(double waitseconds) {return new waitLiftTarget(50,waitseconds);} //not tested i think
-    public Action waitLiftFloor(double waitseconds) {return new waitLiftTarget(164.6352,waitseconds);}
+    public Action waitLiftFloor(double waitseconds) {return new waitLiftTarget(158.4326,waitseconds);}
     public Action waitLiftDown(double waitseconds) {return new waitLiftTarget(5.0199819357,waitseconds);}
-    public Action waitLiftHighBasket(double waitseconds, double seconds) {return new waitLiftTarget(169.4201,waitseconds,seconds);}
-    public Action waitLiftRung(double waitseconds, double seconds) {return new waitLiftTarget(95.3431,waitseconds,seconds);}
-    public Action waitLiftWall(double waitseconds, double seconds) {return new waitLiftTarget(154.1794,waitseconds,seconds);}
+    public Action waitLiftHighBasket(double waitseconds, double seconds) {return new waitLiftTarget(152.673,waitseconds,seconds);}
+    public Action waitLiftRung(double waitseconds, double seconds) {return new waitLiftTarget(91.2671,waitseconds,seconds);}
+    public Action waitLiftWall(double waitseconds, double seconds) {return new waitLiftTarget(154.0908,waitseconds,seconds);}
     public Action waitLiftLowBasket(double waitseconds, double seconds) {return new waitLiftTarget(50,waitseconds,seconds);} //not tested i think
-    public Action waitLiftFloor(double waitseconds, double seconds) {return new waitLiftTarget(164.6352,waitseconds,seconds);}
+    public Action waitLiftFloor(double waitseconds, double seconds) {return new waitLiftTarget(158.4326,waitseconds,seconds);}
     public Action waitLiftDown(double waitseconds, double seconds) {return new waitLiftTarget(5.0199819357,waitseconds,seconds);}
 }

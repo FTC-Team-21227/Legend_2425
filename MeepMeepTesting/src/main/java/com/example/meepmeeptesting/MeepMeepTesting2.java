@@ -200,11 +200,20 @@ public class MeepMeepTesting2 {
                 .splineToConstantHeading(new Vector2d(40,-55),Math.toRadians(0))
                 .build());
 
+        RoadRunnerBotEntity myBot5 = new DefaultBotBuilder(meepMeep)
+                // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
+                .setConstraints(70, 60, Math.toRadians(180), Math.toRadians(180), 13.35)
+                .build();
+        myBot5.runAction(myBot5.getDrive().actionBuilder(new Pose2d(10, 10, Math.toRadians(90)))
+                        .setTangent(Math.toRadians(90))
+                                .lineToY(30)
+                                        .build());
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_OFFICIAL)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
                 .addEntity(myBot)
-                .addEntity(myBot4)
+                //.addEntity(myBot)
+                //.addEntity(myBot4)
                 //.addEntity(myBot2)
                 //.addEntity(myBot3)
                 .start();

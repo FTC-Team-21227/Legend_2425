@@ -54,9 +54,11 @@ public class AUTON2025REDLEFT_5 extends LinearOpMode{
 //        TrajectoryActionBuilder tab9 = drive.actionBuilder(new Pose2d(-4,122,Math.toRadians(140)))
 //                .strafeTo(new Vector2d(10, 120))
 //                .strafeTo(new Vector2d(5,125));
-
-        claw.closeClaw();
-        intake_angle.RotatePosition0();
+        Actions.runBlocking(
+                new ParallelAction(
+            claw.closeClaw(),
+            intake_angle.RotatePosition0())
+            );
 
         waitForStart();
 
