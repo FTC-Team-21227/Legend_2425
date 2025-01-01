@@ -21,7 +21,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @Config
-@TeleOp
+//@TeleOp
 public class TunePID extends OpMode {
     private DcMotorEx ARM1; //bottom arm
     private DcMotorEx ARM2; //top arm

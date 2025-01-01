@@ -28,7 +28,7 @@ import org.firstinspires.ftc.teamcode.autons.PoseStorage;
 import java.util.Objects;
 
 //@Config
-@TeleOp(name = "TeleOp2425_RR_NoCalibration")
+//@TeleOp(name = "TeleOp2425_RR_NoCalibration")
 public class TeleOp2425_RR extends LinearOpMode {
     //PID controllers for ARM1 and ARM2
     private PIDController controller1;
@@ -362,11 +362,11 @@ public class TeleOp2425_RR extends LinearOpMode {
         ARM1.setDirection(DcMotor.Direction.REVERSE);
         ARM1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         ARM1.setPower(0);
-        target1 = ARM1.getCurrentPosition();
+        target1 = ARM1.getCurrentPosition()/ticks_in_degree_1;
         ARM2.setDirection(DcMotor.Direction.REVERSE);
         ARM1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         ARM2.setPower(0);
-        target2 = ARM2.getCurrentPosition();
+        target2 = ARM2.getCurrentPosition()/ticks_in_degree_2;
         telemetry.addData("Claw",Claw.getPosition());
         telemetry.update();
         Claw.scaleRange(0.2,0.8);

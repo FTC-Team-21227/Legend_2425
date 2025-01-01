@@ -15,7 +15,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
-@Autonomous(name = "AUTONRIGHT_7_4specfast")
+@Autonomous(name = "AUTONRIGHT_7_4specpark")
+//4 spec with parking
 public class AUTON2025REDRIGHT_7 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
