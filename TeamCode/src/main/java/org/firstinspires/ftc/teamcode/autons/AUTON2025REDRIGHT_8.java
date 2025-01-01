@@ -35,14 +35,16 @@ public class AUTON2025REDRIGHT_8 extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(10,-45),Math.toRadians(-90))
                 .splineToConstantHeading(new Vector2d(48, -27),Math.toRadians(90))
                 .splineToConstantHeading(new Vector2d(53, -15),Math.toRadians(0))
+                .setTangent(Math.toRadians(-90))
                 .strafeTo(new Vector2d(53, -50))
                 .setTangent(Math.toRadians(90))
                 .splineToConstantHeading(new Vector2d(53, -20),Math.toRadians(90))
                 .splineToConstantHeading(new Vector2d(59,-15),Math.toRadians(0))
                 .splineToConstantHeading(new Vector2d(65, -20),Math.toRadians(-90))
-                .strafeTo(new Vector2d(65, -50))
+                .setTangent(Math.toRadians(-90))
+                .strafeTo(new Vector2d(62, -50))
                 .setTangent(Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(62,-20),Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(60,-20),Math.toRadians(90))
                 .splineToConstantHeading(new Vector2d(72,-15),Math.toRadians(0))
                 .setTangent(Math.toRadians(-90))
                 .splineToConstantHeading(new Vector2d(72,-50),Math.toRadians(-90));
@@ -189,6 +191,6 @@ public class AUTON2025REDRIGHT_8 extends LinearOpMode {
 //                        )
                 )
         );
-        PoseStorage.currentPose = new Pose2d(new Vector2d(drive.pose.position.x,drive.pose.position.y),Math.toRadians(-Math.PI/2+drive.pose.heading.toDouble()));
+        PoseStorage.currentPose = new Pose2d(new Vector2d(drive.pose.position.x,drive.pose.position.y),-Math.PI/2+drive.pose.heading.toDouble());
     }
 }

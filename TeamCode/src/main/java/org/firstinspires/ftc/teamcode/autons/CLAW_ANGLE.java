@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class CLAW_ANGLE {
     private Servo Claw_Angle;
@@ -15,10 +16,25 @@ public class CLAW_ANGLE {
     }
 
     public class Forward implements Action {
+        ElapsedTime time = new ElapsedTime();
+        boolean start;
+        double runTime;
+        public Forward(){
+            start = false;
+            runTime = 0.5;
+        }
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            Claw_Angle.setPosition(0);
-            return false;
+            if (!start) {
+                time.reset();
+                start = true;
+            }
+            if (time.seconds() < runTime) {
+                return true;
+            } else {
+                Claw_Angle.setPosition(0);
+                return false;
+            }
         }
     }
     public Action forward() {
@@ -26,10 +42,25 @@ public class CLAW_ANGLE {
     }
 
     public class Backward implements Action {
+        ElapsedTime time = new ElapsedTime();
+        boolean start;
+        double runTime;
+        public Backward(){
+            start = false;
+            runTime = 0.5;
+        }
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            Claw_Angle.setPosition(1);
-            return false;
+            if (!start) {
+                time.reset();
+                start = true;
+            }
+            if (time.seconds() < runTime) {
+                return true;
+            } else {
+                Claw_Angle.setPosition(1);
+                return false;
+            }
         }
     }
     public Action backward() {

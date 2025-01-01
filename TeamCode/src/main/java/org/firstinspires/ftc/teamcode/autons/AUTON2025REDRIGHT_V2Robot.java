@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 @Autonomous(name = "AUTONRIGHT_V2Robot_5spec")
-//5 spec with new V2 Robot. So much potential!
+//5 spec with new V2 Robot. So much potential! (old v8)
 public class AUTON2025REDRIGHT_V2Robot extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
@@ -85,7 +85,7 @@ public class AUTON2025REDRIGHT_V2Robot extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
                         claw.closeClaw(),
-//                        intake_angle.RotatePosition1(),
+                        intake_angle.RotatePosition1(),
                         claw_angle.forward()
                 )
         );
@@ -111,7 +111,7 @@ public class AUTON2025REDRIGHT_V2Robot extends LinearOpMode {
                         //first specimen
                         new ParallelAction(
                                 claw.closeClaw(),
-//                                intake_angle.RotatePosition0(),
+                                intake_angle.RotatePosition0(),
                                 arm1.liftRung(1.3),
                                 arm2.liftRung(1.3),
                                 firstTrajectory

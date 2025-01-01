@@ -1,23 +1,21 @@
 package org.firstinspires.ftc.teamcode.autons;
 
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.MinVelConstraint;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
-@Autonomous(name = "AUTONRIGHT_6_4specold")
-//4 spec with pushing 2
-public class AUTON2025REDRIGHT_6 extends LinearOpMode {
+@Autonomous(name = "AUTONRIGHT_V2Robot_6")
+//4 spec with pushing 2 (old v6)
+public class AUTON2025REDRIGHT_V2Robot_2 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Pose2d initialPose = new Pose2d(14, -63.3, Math.toRadians(90));
@@ -27,6 +25,7 @@ public class AUTON2025REDRIGHT_6 extends LinearOpMode {
         ARM2_NEW arm2 = new ARM2_NEW(hardwareMap);
         CLAW claw = new CLAW(hardwareMap);
         INTAKE_ANGLE intake_angle = new INTAKE_ANGLE(hardwareMap);
+        CLAW_ANGLE claw_angle = new CLAW_ANGLE(hardwareMap);
 
         //4 spec auto attempt.
         TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose) //first specimen
@@ -78,7 +77,8 @@ public class AUTON2025REDRIGHT_6 extends LinearOpMode {
         Actions.runBlocking(
             new SequentialAction(
                 claw.closeClaw(),
-                intake_angle.RotatePosition1()
+                intake_angle.RotatePosition1(),
+                claw_angle.forward()
             )
         );
 

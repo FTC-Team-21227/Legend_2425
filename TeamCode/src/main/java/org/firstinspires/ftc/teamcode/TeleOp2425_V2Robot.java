@@ -84,7 +84,7 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
     boolean hookDown = false;
     int claw = 0;
     int claw_angle = 0;
-    int intake_angle = 0;
+    int intake_angle = 1;
     /**
      * This function is executed when this Op Mode is selected from the Driver Station.
      */
@@ -112,14 +112,14 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
         Claw = hardwareMap.get(Servo.class, "Claw");
         Intake_Angle = hardwareMap.get(Servo.class,"Intake_Angle");
         Claw_Angle = hardwareMap.get(Servo.class,"Claw_Angle");
-//        ARM1Sensor = hardwareMap.get(TouchSensor.class, "ARM1Sensor");
-//        ARM2Sensor = hardwareMap.get(TouchSensor.class, "ARM2Sensor");
+        ARM1Sensor = hardwareMap.get(TouchSensor.class, "ARM1Sensor");
+        ARM2Sensor = hardwareMap.get(TouchSensor.class, "ARM2Sensor");
 
         // Put initialization blocks here.
         Initialization();
         if (opModeIsActive()) {
             Intake_Angle.setPosition(1);
-            Claw_Angle.setPosition(0.5);
+            Claw_Angle.setPosition(0);
             Claw.setPosition(0);
             // Put run blocks here.
             while (opModeIsActive()) {
@@ -133,7 +133,7 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
                 W_FL.setPower(Motor_power_FL);
                 //controls the arm motor powers
                 if (!(ARM1calibrated && ARM2calibrated)) {
-//                    ARM_Calibration(); //calibration function
+                    ARM_Calibration(); //calibration function
                 }
                 else {
                     ARM_SetTargets(); //gamepad presets and other things to set the target positions for each arm motor
@@ -174,11 +174,13 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
 //                telemetry.addData("ARM2 Pressed:",ARM2Sensor.isPressed());
                 telemetry.addData("Claw", Claw.getPosition());
                 telemetry.addData("Intake angle", Intake_Angle.getPosition());
+                telemetry.addData("Claw angle", Claw_Angle.getPosition());
                 telemetry.addData("ARM1 Power", ARM1.getPower());
                 telemetry.addData("ARM2 Power", ARM2.getPower());
                 telemetry.addData("Manual servo", manual);
                 telemetry.addData("State time", stateTime);
                 telemetry.addData("Run time", getRuntime());
+                telemetry.addData("Initial heading",initialHeading);
 
                 telemetry.update();
             }
@@ -191,12 +193,12 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
                     if (Intake_Angle.getPosition() != 0) {
                         Intake_Angle.setPosition(0);
                     }
-                    if (Math.abs(Heading_Angle + 45) < 15 && Claw_Angle.getPosition() != 1) {
+                    if (Claw_Angle.getPosition() != 1) {
                         Claw_Angle.setPosition(1);
-                    } else if (Math.abs(Heading_Angle - 135) < 15 && Claw_Angle.getPosition() != 0) {
-                        Claw_Angle.setPosition(0);
+//                        telemetry.addData("fd","whyu not rotating");
                     }
-                    telemetry.addData("In high basket", "yes");
+//                    telemetry.addData("fd",Math.abs(Heading_Angle+45));
+//                    telemetry.addData("In high basket", "yes");
                 }
             case "highRung": //Intake Angle 0, Claw Angle 0
                 if (getRuntime() - stateTime > 0.5){
@@ -305,9 +307,10 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
 //        else if (!ARM2calibrated){
 //            ARM2.setPower(-0.2);
 //        }
+        telemetry.addData("We Are Heree","yesd");
     }
     private void ARM_SetTargets() {
-//            telemetry.addData("We Are Heree","yesd");
+//
         if (gamepad2.start){ //recalibrate the motors
             ARM1calibrated = false;
             ARM2calibrated = false;
@@ -342,27 +345,33 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
         }
         if (gamepad1.y && gamepad1.left_bumper){
             target1 = 97.854286777;
-            target2 = 152.673;
+            target2 = 131.0525;
         }
         else if (gamepad1.y) {//high basket
+//            target1 = 97.854286777;
+//            target2 = 152.673;
             target1 = 97.854286777;
-            target2 = 152.673;
+            target2 = 131.0525;
 //            Targeting_Angle = -45+initialHeading; //(add this?)
             stateTime = getRuntime();
             state = "highBasket";
             manual = false;
         }
         if (gamepad1.a) {//floor
-            target1 = 0.9086;
-            target2 = 158.4326;
+            target1 = 0.6217;
+            target2 = 159.8503;
+//            target1 = 0.9086;
+//            target2 = 158.4326;
         }
         if (gamepad1.b && gamepad1.left_bumper){
+//            target1 = 15.0642;
+//            target2 = 154.0908;
             target1 = 15.0642;
-            target2 = 154.0908;
+            target2 = 156.749;
         }
         else if (gamepad1.b) {//wall
             target1 = 15.0642;
-            target2 = 154.0908; //155.7743
+            target2 = 156.749;
             stateTime = getRuntime();
             state = "wall";
             manual = false;
@@ -434,7 +443,7 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
         W_FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         W_BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         W_BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        Intake_Angle.scaleRange(0.3, 0.7);
+        Intake_Angle.scaleRange(0.28, 0.8);
         ARM1.setDirection(DcMotor.Direction.REVERSE);
         ARM1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         ARM1.setPower(0);
@@ -445,7 +454,7 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
         target2 = ARM2.getCurrentPosition()/ticks_in_degree_2;
         telemetry.addData("Claw",Claw.getPosition());
         telemetry.update();
-        Claw.scaleRange(0.2,0.775);
+        Claw.scaleRange(0.2,0.8);
         Claw_Angle.scaleRange(0.04, 0.7);
 
 
@@ -472,7 +481,7 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
         Heading_Angle = Direction.firstAngle;
         if (Math.abs(gamepad1.right_stick_x) >= 0.01) {
             imu_rotation = 0;
-            Targeting_Angle = Heading_Angle;
+            Targeting_Angle = Heading_Angle+initialHeading;
         } else {
             Angle_Difference = Heading_Angle - Targeting_Angle;
             if (Angle_Difference > 180) {

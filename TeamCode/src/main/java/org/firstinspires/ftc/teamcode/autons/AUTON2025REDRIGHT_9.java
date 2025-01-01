@@ -186,6 +186,6 @@ public class AUTON2025REDRIGHT_9 extends LinearOpMode {
                         )
                 )
         );
-        PoseStorage.currentPose = new Pose2d(new Vector2d(drive.pose.position.x,drive.pose.position.y),Math.toRadians(-Math.PI/2+drive.pose.heading.toDouble()));
+        PoseStorage.currentPose = new Pose2d(new Vector2d(drive.pose.position.x,drive.pose.position.y),-Math.PI/2+drive.pose.heading.toDouble());
     }
 }

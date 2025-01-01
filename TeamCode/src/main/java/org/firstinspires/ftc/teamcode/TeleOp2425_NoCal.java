@@ -134,7 +134,7 @@ public class TeleOp2425_NoCal extends LinearOpMode {
                 Hook_Control();
                 //reset imu if necessary
                 if (gamepad1.back) {
-                    imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD)));
+//                    imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD)));
                     imu.resetYaw();
                     Heading_Angle = 0;
                     Targeting_Angle = 0;
@@ -161,6 +161,7 @@ public class TeleOp2425_NoCal extends LinearOpMode {
                 telemetry.addData("Intake angle", Intake_Angle.getPosition());
                 telemetry.addData("ARM1 Power", ARM1.getPower());
                 telemetry.addData("ARM2 Power", ARM2.getPower());
+                telemetry.addData("Initial heading: ",initialHeading);
 
 
                 telemetry.update();
@@ -368,7 +369,7 @@ public class TeleOp2425_NoCal extends LinearOpMode {
         Heading_Angle = Direction.firstAngle;
         if (Math.abs(gamepad1.right_stick_x) >= 0.01) {
             imu_rotation = 0;
-            Targeting_Angle = Heading_Angle;
+            Targeting_Angle = Heading_Angle+initialHeading;
         } else {
             Angle_Difference = Heading_Angle - Targeting_Angle;
             if (Angle_Difference > 180) {
