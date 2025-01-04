@@ -18,40 +18,46 @@ public class AUTON2025REDLEFT_V2Robot extends LinearOpMode{
     public void runOpMode() throws InterruptedException {
         Pose2d initialPose = new Pose2d(0, 92, Math.toRadians(0));
         MecanumDrive_Left drive = new MecanumDrive_Left(hardwareMap, initialPose);
-        ARM1_NEW arm1 = new ARM1_NEW(hardwareMap);
-        ARM2_NEW arm2 = new ARM2_NEW(hardwareMap);
+        ARM1_V2Robot arm1 = new ARM1_V2Robot(hardwareMap);
+        ARM2_V2Robot arm2 = new ARM2_V2Robot(hardwareMap);
         CLAW claw = new CLAW(hardwareMap);
         INTAKE_ANGLE intake_angle = new INTAKE_ANGLE(hardwareMap);
         CLAW_ANGLE claw_angle = new CLAW_ANGLE(hardwareMap);
         TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
+                .strafeTo(new Vector2d(10, 92))
                 .waitSeconds(1)
-                .setTangent(0)
-                .splineToLinearHeading(new Pose2d(8, 111, Math.toRadians(-45)), Math.toRadians(30));// loaded sample go to basket
-        TrajectoryActionBuilder tab3 = drive.actionBuilder(new Pose2d(4.5, 114, Math.toRadians(-45)))
+//                .setTangent(0)
+                .strafeToLinearHeading(new Vector2d(9, 112), Math.toRadians(-45));// loaded sample go to basket
+        TrajectoryActionBuilder tab3 = drive.actionBuilder(new Pose2d(9, 112, Math.toRadians(-45)))
                 .waitSeconds(0.5)
-                .strafeToLinearHeading(new Vector2d(10, 109.5), Math.toRadians(360)); //get 1st sample from the left side
+                .strafeToLinearHeading(new Vector2d(9.2, 106.5), Math.toRadians(0)); //get 1st sample from the left side
 //                .strafeTo(new Vector2d(10.5, 109.5)); //get 1st sample
-        TrajectoryActionBuilder tab4 = drive.actionBuilder(new Pose2d(10, 109.5, Math.toRadians(0)))
+        TrajectoryActionBuilder tab4 = drive.actionBuilder(new Pose2d(9.2, 106.5, Math.toRadians(0)))
                 .waitSeconds(1.5)
-                .strafeToLinearHeading(new Vector2d(8, 111), Math.toRadians(-45)); //go away from wall bec arms lifting
-        TrajectoryActionBuilder tab5 = drive.actionBuilder(new Pose2d(8, 111, Math.toRadians(-45)))
+                .strafeToLinearHeading(new Vector2d(9, 112), Math.toRadians(-45)) //go away from wall bec arms lifting
+                .waitSeconds(0.7);
+        TrajectoryActionBuilder tab5 = drive.actionBuilder(new Pose2d(9, 112, Math.toRadians(-45)))
                 .waitSeconds(0.5)
-                .strafeToLinearHeading(new Vector2d(9.5, 119.5), Math.toRadians(360)); //get 2nd sample from the left side
+                .strafeToLinearHeading(new Vector2d(9.2, 119), Math.toRadians(0)); //get 2nd sample from the left side
 //                .strafeTo(new Vector2d(10.5, 119.5)); //get 1st sample
-        TrajectoryActionBuilder tab6 = drive.actionBuilder(new Pose2d(9.5, 119.5, Math.toRadians(0)))
+        TrajectoryActionBuilder tab6 = drive.actionBuilder(new Pose2d(9.2, 119, Math.toRadians(0)))
                 .waitSeconds(1.5)
-                .strafeToLinearHeading(new Vector2d(8, 111), Math.toRadians(-45)); //go away from wall bec arms lifting
-        TrajectoryActionBuilder tab7 = drive.actionBuilder(new Pose2d(8, 111, Math.toRadians(-45)))
+                .strafeToLinearHeading(new Vector2d(8.5, 112), Math.toRadians(-45)) //go away from wall bec arms lifting
+                .waitSeconds(0.7);
+        TrajectoryActionBuilder tab7 = drive.actionBuilder(new Pose2d(8.5, 112, Math.toRadians(-45)))
                 .waitSeconds(0.5)
-                .strafeToLinearHeading(new Vector2d(10.5, 122.5), Math.toRadians(15)); //get 3rd sample from the left side
+                .strafeToLinearHeading(new Vector2d(11.7,113.5),Math.toRadians(10))
+                .waitSeconds(1.5)
+                .turnTo(Math.toRadians(32)); //get 3rd sample from the left side
 //                .strafeTo(new Vector2d(10.5, 122.5)); //get 1st sample
-        TrajectoryActionBuilder tab8 = drive.actionBuilder(new Pose2d(10.5,122.5, Math.toRadians(15)))
+        TrajectoryActionBuilder tab8 = drive.actionBuilder(new Pose2d(11.7,113.5, drive.pose.heading.toDouble()))
                 .waitSeconds(1.5)
-                .strafeToLinearHeading(new Vector2d(8, 111), Math.toRadians(-45)); //go away from wall bec arms lifting
-        TrajectoryActionBuilder tab9 = drive.actionBuilder(new Pose2d(8, 111, Math.toRadians(-45)))
+                .strafeToLinearHeading(new Vector2d(8.5, 112), Math.toRadians(-45)) //go away from wall bec arms lifting
+                .waitSeconds(0.7);
+        TrajectoryActionBuilder tab9 = drive.actionBuilder(new Pose2d(8.5, 112, Math.toRadians(-45)))
                 .waitSeconds(0.5)
-                .strafeToSplineHeading(new Vector2d(54, 96), Math.toRadians(270))//avoid bumping into submersible
-                .strafeTo(new Vector2d(54, 93)); //touch bar
+                .strafeToSplineHeading(new Vector2d(54, 96), Math.toRadians(-90))//avoid bumping into submersible
+                .strafeTo(new Vector2d(54, 90)); //touch bar
         Actions.runBlocking(
                 new ParallelAction(
             claw.closeClaw(),
@@ -87,8 +93,8 @@ public class AUTON2025REDLEFT_V2Robot extends LinearOpMode{
 //                                secondTrajectory,
                                 thirdTrajectory,
                                 claw_angle.forward(),
-                                arm1.waitLiftFloor(1),
-                                arm2.waitLiftFloor(1)
+                                arm1.waitLiftFloor(1.5),
+                                arm2.waitLiftFloor(1.5)
                         ),
                         claw.closeClaw(),
                         new ParallelAction(
@@ -101,8 +107,8 @@ public class AUTON2025REDLEFT_V2Robot extends LinearOpMode{
                         new ParallelAction(
                                 fifthTrajectory,
                                 claw_angle.forward(),
-                                arm1.waitLiftFloor(1),
-                                arm2.waitLiftFloor(1)
+                                arm1.waitLiftFloor(1.5),
+                                arm2.waitLiftFloor(1.5)
                         ),
                         claw.closeClaw(),
                         new ParallelAction(
@@ -115,8 +121,10 @@ public class AUTON2025REDLEFT_V2Robot extends LinearOpMode{
                         new ParallelAction(
                                 seventhTrajectory,
                                 claw_angle.forward(),
-                                arm1.waitLiftFloor(3),
-                                arm2.waitLiftFloor(3)
+                                arm1.waitLiftWall(1.5),
+                                arm2.waitLiftWall(1.5),
+                                arm1.waitLiftFloor(4.5,1),
+                                arm2.waitLiftFloor(4.5,1)
                         ),
                         claw.closeClaw(),
                         new ParallelAction(
@@ -126,7 +134,11 @@ public class AUTON2025REDLEFT_V2Robot extends LinearOpMode{
                                 arm2.waitLiftHighBasket(0.5)
                         ),
                         claw.openClaw(),
-                        ninthTrajectory
+                        new ParallelAction(
+                            ninthTrajectory,
+                            arm1.waitLiftRung(1.5),
+                            arm2.waitLiftRung(1.5)
+                        )
                 )
         );
         PoseStorage.currentPose = drive.pose;

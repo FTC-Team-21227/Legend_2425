@@ -1,26 +1,19 @@
 package org.firstinspires.ftc.teamcode.autons;
 
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.AngularVelConstraint;
-import com.acmerobotics.roadrunner.MinVelConstraint;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
-import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.MecanumDrive_Left;
 
-import java.util.List;
-
-//@Autonomous(name = "AUTONLEFT_Brandon")
-public class AUTON2025REDLEFT_Brandon extends LinearOpMode{
+//@Autonomous(name = "AUTONLEFT_V2Robot_OLD")
+public class AUTON2025REDLEFT_V2Robot_2 extends LinearOpMode{
     @Override
     public void runOpMode() throws InterruptedException {
         Pose2d initialPose = new Pose2d(0, 92, Math.toRadians(0));
@@ -29,6 +22,7 @@ public class AUTON2025REDLEFT_Brandon extends LinearOpMode{
         ARM2_NEW arm2 = new ARM2_NEW(hardwareMap);
         CLAW claw = new CLAW(hardwareMap);
         INTAKE_ANGLE intake_angle = new INTAKE_ANGLE(hardwareMap);
+        CLAW_ANGLE claw_angle = new CLAW_ANGLE(hardwareMap);
         TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose)
                 .waitSeconds(1)
                 .setTangent(0)
@@ -59,10 +53,12 @@ public class AUTON2025REDLEFT_Brandon extends LinearOpMode{
                 .strafeToSplineHeading(new Vector2d(54, 96), Math.toRadians(270))//avoid bumping into submersible
                 .strafeTo(new Vector2d(54, 93)); //touch bar
         Actions.runBlocking(
-                new ParallelAction(
-            claw.closeClaw(),
-            intake_angle.RotatePosition1())
-            );
+                new SequentialAction(
+                        claw.closeClaw(),
+                        intake_angle.RotatePosition1(),
+                        claw_angle.forward()
+                )
+        );
 
         waitForStart();
 

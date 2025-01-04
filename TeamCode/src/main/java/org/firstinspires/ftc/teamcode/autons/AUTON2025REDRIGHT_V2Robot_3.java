@@ -10,20 +10,20 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.MecanumDrive_Left;
 
-//@Autonomous(name = "AUTONRIGHT_5_3spec")
+//@Autonomous(name = "AUTONRIGHT_V2Robot_3spec")
 //3 specimen auto
-public class AUTON2025REDRIGHT_5 extends LinearOpMode {
+public class AUTON2025REDRIGHT_V2Robot_3 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Pose2d initialPose = new Pose2d(14, -63.3, Math.toRadians(90));
         MecanumDrive_Left drive = new MecanumDrive_Left(hardwareMap, initialPose);
-        ARM1_NEW arm1 = new ARM1_NEW(hardwareMap);
-        ARM2_NEW arm2 = new ARM2_NEW(hardwareMap);
+        ARM1_V2Robot arm1 = new ARM1_V2Robot(hardwareMap);
+        ARM2_V2Robot arm2 = new ARM2_V2Robot(hardwareMap);
         CLAW claw = new CLAW(hardwareMap);
         INTAKE_ANGLE intake_angle = new INTAKE_ANGLE(hardwareMap);
+        CLAW_ANGLE claw_angle = new CLAW_ANGLE(hardwareMap);
 
         TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose) //first specimen
                 .waitSeconds(0.5)
@@ -60,8 +60,13 @@ public class AUTON2025REDRIGHT_5 extends LinearOpMode {
                 .setTangent(Math.toRadians(-90))
                 .splineToSplineHeading(new Pose2d(45,-55,Math.toRadians(90)),Math.toRadians(0));
 
-        claw.closeClaw();
-        intake_angle.RotatePosition1();
+        Actions.runBlocking(
+                new SequentialAction(
+                        claw.closeClaw(),
+                        intake_angle.RotatePosition1(),
+                        claw_angle.forward()
+                )
+        );
 
         waitForStart();
 

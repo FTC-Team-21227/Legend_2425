@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
-@Autonomous(name = "AUTONRIGHT_9_5specturnvert")
+//@Autonomous(name = "AUTONRIGHT_9_5specturnvert")
 //5 spec with timesave from pushing the samples forwards
 public class AUTON2025REDRIGHT_9 extends LinearOpMode {
     @Override

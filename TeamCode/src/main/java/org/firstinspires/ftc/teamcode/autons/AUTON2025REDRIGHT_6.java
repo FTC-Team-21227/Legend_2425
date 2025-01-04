@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
-@Autonomous(name = "AUTONRIGHT_6_4specold")
+//@Autonomous(name = "AUTONRIGHT_6_4specpushTWO")
 //4 spec with pushing 2
 public class AUTON2025REDRIGHT_6 extends LinearOpMode {
     @Override

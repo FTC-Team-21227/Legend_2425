@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@TeleOp(name = "Claw_11172024_2 (Blocks to Java)")
+//@TeleOp(name = "Claw_11172024_2 (Blocks to Java)")
 public class Claw_11172024_2 extends LinearOpMode {
 
   private CRServo Hook;

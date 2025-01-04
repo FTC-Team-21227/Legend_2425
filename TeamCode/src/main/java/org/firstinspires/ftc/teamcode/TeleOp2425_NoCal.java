@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.TunePID;
 import org.firstinspires.ftc.teamcode.autons.PoseStorage;
 
 //@Config
-@TeleOp(name = "TeleOp2425_NoCal")
+//@TeleOp(name = "TeleOp2425_NoCal")
 //Most recent teleop for the old robot with no calibrations
 public class TeleOp2425_NoCal extends LinearOpMode {
     //PID controllers for ARM1 and ARM2
@@ -366,10 +366,10 @@ public class TeleOp2425_NoCal extends LinearOpMode {
         double Angle_Difference;
 
         Direction = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        Heading_Angle = Direction.firstAngle;
+        Heading_Angle = Direction.firstAngle+initialHeading;
         if (Math.abs(gamepad1.right_stick_x) >= 0.01) {
             imu_rotation = 0;
-            Targeting_Angle = Heading_Angle+initialHeading;
+            Targeting_Angle = Heading_Angle;
         } else {
             Angle_Difference = Heading_Angle - Targeting_Angle;
             if (Angle_Difference > 180) {

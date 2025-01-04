@@ -12,8 +12,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.MecanumDrive_Left;
 
-@Autonomous(name = "AUTONRIGHT_V2Robot_6")
+@Autonomous(name = "AUTONRIGHT_V2Robot_4specpushTWO")
 //4 spec with pushing 2 (old v6)
 public class AUTON2025REDRIGHT_V2Robot_2 extends LinearOpMode {
     @Override
@@ -21,30 +22,29 @@ public class AUTON2025REDRIGHT_V2Robot_2 extends LinearOpMode {
         Pose2d initialPose = new Pose2d(14, -63.3, Math.toRadians(90));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
-        ARM1_NEW arm1 = new ARM1_NEW(hardwareMap);
-        ARM2_NEW arm2 = new ARM2_NEW(hardwareMap);
+        ARM1_V2Robot arm1 = new ARM1_V2Robot(hardwareMap);
+        ARM2_V2Robot arm2 = new ARM2_V2Robot(hardwareMap);
         CLAW claw = new CLAW(hardwareMap);
         INTAKE_ANGLE intake_angle = new INTAKE_ANGLE(hardwareMap);
         CLAW_ANGLE claw_angle = new CLAW_ANGLE(hardwareMap);
 
         //4 spec auto attempt.
         TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose) //first specimen
-                //.waitSeconds(0.5)
+                .waitSeconds(0.5)
                 .setTangent(Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(10,-41.3),Math.toRadians(90));
-        TrajectoryActionBuilder tab3 = drive.actionBuilder(new Pose2d(10, -41.3, Math.toRadians(90))) //push colored samples
+                .splineToConstantHeading(new Vector2d(9,-41.3),Math.toRadians(90));
+        TrajectoryActionBuilder tab3 = drive.actionBuilder(new Pose2d(9, -41.3, Math.toRadians(90))) //push colored samples
                 .setTangent(Math.toRadians(-90))
                 //improved, we want 1 s shape
                 .splineToConstantHeading(new Vector2d(10,-45),Math.toRadians(-90))
-                .splineToConstantHeading(new Vector2d(48, -27),Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(55, -15),Math.toRadians(0)) //make u's of this
-                .setTangent(Math.toRadians(-90))
-                .strafeTo(new Vector2d(55, -50)) //y value may need to be changed
+                .splineToConstantHeading(new Vector2d(46.5, -27),Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(53, -15),Math.toRadians(0)) //make u's of this
+                .strafeTo(new Vector2d(53, -50)) //y value may need to be changed
                 .setTangent(Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(55, -25),Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(63, -15),Math.toRadians(0))
-                .strafeTo(new Vector2d(63, -53));
-        TrajectoryActionBuilder tab5 = drive.actionBuilder(new Pose2d(63, -53, Math.toRadians(90))) //go to second specimen
+                .splineToConstantHeading(new Vector2d(53, -25),Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(62, -15),Math.toRadians(0))
+                .strafeTo(new Vector2d(62, -53));
+        TrajectoryActionBuilder tab5 = drive.actionBuilder(new Pose2d(62, -53, Math.toRadians(90))) //go to second specimen
                 .strafeToSplineHeading(new Vector2d(40,-60),Math.toRadians(0)) //improved to a single movement
                 .strafeTo(new Vector2d(44.5,-60),new TranslationalVelConstraint(10));
         TrajectoryActionBuilder tab6 = drive.actionBuilder(new Pose2d(44, -60, Math.toRadians(0))) //pick up and place second specimen
@@ -102,8 +102,8 @@ public class AUTON2025REDRIGHT_V2Robot_2 extends LinearOpMode {
                         new ParallelAction(
                                 claw.closeClaw(),
                                 intake_angle.RotatePosition0(),
-                                arm1.liftRung(1.3),
-                                arm2.liftRung(1.3),
+                                arm1.liftRung(1.5),
+                                arm2.liftRung(1.5),
                                 firstTrajectory
                         ),
                         claw.openClaw(),
