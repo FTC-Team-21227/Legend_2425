@@ -49,7 +49,7 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
     private final double floor = 0.6217;
     private final double down = 4.48338159887;
     private final double highBasket2 = 131.0525;
-    private final double highRung2 = 91.2671;
+    private final double highRung2 = 90.2671;
 
     private final double wall2 = 156.749;
     private final double lowBasket2 = 50; //not tested
@@ -99,7 +99,7 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
     boolean hookDown = false;
     int claw = 0;
     int claw_angle = 2;
-    int intake_angle = 2;
+    double intake_angle = 2;
     boolean servoReset = false;
     double servoResetTime;
     /**
@@ -199,63 +199,63 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
                 telemetry.addData("State time", stateTime);
                 telemetry.addData("Run time", getRuntime());
                 telemetry.addData("Initial heading",initialHeading);
+                telemetry.addData("ARM1 Sensor", ARM1Sensor);
+                telemetry.addData("ARM2 Sensor", ARM2Sensor);
 
                 telemetry.update();
             }
         }
     }
-    private void Control_Servo_States(){
-        switch (state){
-            case "highBasket": //Intake Angle 0, swivel Claw Angle to face the basket
-                if (getRuntime() - stateTime > 0.5) {
-                    if (intake_angle != 0) {
-                        Intake_Angle.setPosition(0);
-                        intake_angle = 0;
-                    }
-//                    if (claw_angle != 1) {
-                        Claw_Angle.setPosition(1);
-                        claw_angle = 1;
-                        telemetry.addData("fd","whyu not rotating");
-//                    }
-                    telemetry.addData("In high basket", "yes");
+    private void Control_Servo_States() {
+        if (state.equals("highBasket")) { //Intake Angle 0, swivel Claw Angle to face the basket
+            telemetry.addData("In high basket", "yes");
+            if (getRuntime() - stateTime > 0.5) {
+                if (intake_angle != 0) {
+                    Intake_Angle.setPosition(0);
+                    intake_angle = 0;
                 }
-            case "highRung": //Intake Angle 0, Claw Angle 0
-                if (getRuntime() - stateTime > 0.5){
-                    if (intake_angle != 0){
-                        Intake_Angle.setPosition(0);
-                        intake_angle = 0;
-                    }
-                    if (claw_angle != 0){
-                        Claw_Angle.setPosition(0);
-                        claw_angle = 0;
-                    }
-                    telemetry.addData("In high rung", "yes");
+                if (claw_angle != 1) {
+                    Claw_Angle.setPosition(1);
+                    claw_angle = 1;
+                    telemetry.addData("fd", "whyu not rotating");
                 }
-            case "wall":
-                if (getRuntime() - stateTime > 0.5){
-                    if (intake_angle != 0){
-                        Intake_Angle.setPosition(0);
-                        intake_angle = 0;
-                    }
-                    if (claw_angle != 0){
-                        Claw_Angle.setPosition(0);
-                        claw_angle = 0;
-                    }
-                    telemetry.addData("In wall", "yes");
+            }
+        } else if (state.equals("highRung")) { //Intake Angle 0, Claw Angle 0
+            if (getRuntime() - stateTime > 0.5) {
+                if (intake_angle != 0) {
+                    Intake_Angle.setPosition(0);
+                    intake_angle = 0;
                 }
-            case "enterSub":
-                if (getRuntime() - stateTime > 0.5){
-                    if (intake_angle != 0){
-                        Intake_Angle.setPosition(0);
-                        intake_angle = 0;
-                    }
-                    if (claw_angle != 0){
-                        Claw_Angle.setPosition(0);
-                        claw_angle = 0;
-                    }
-                    telemetry.addData("In enter sub", "yes");
+                if (claw_angle != 0) {
+                    Claw_Angle.setPosition(0);
+                    claw_angle = 0;
                 }
-            case "a":
+                telemetry.addData("In high rung", "yes");
+            }
+        } else if (state.equals("wall")) {
+            if (getRuntime() - stateTime > 0.5) {
+                if (intake_angle != 0) {
+                    Intake_Angle.setPosition(0);
+                    intake_angle = 0;
+                }
+                if (claw_angle != 0) {
+                    Claw_Angle.setPosition(0);
+                    claw_angle = 0;
+                }
+                telemetry.addData("In wall", "yes");
+            }
+        } else if (state.equals("enterSub")) {
+            if (getRuntime() - stateTime > 0.5) {
+                if (intake_angle != 0) {
+                    Intake_Angle.setPosition(0);
+                    intake_angle = 0;
+                }
+                if (claw_angle != 0) {
+                    Claw_Angle.setPosition(0);
+                    claw_angle = 0;
+                }
+                telemetry.addData("In enter sub", "yes");
+            }
         }
     }
     private void Intake_Control(){
@@ -266,7 +266,7 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
         }
         rightTriggerPressed = gamepad1.right_trigger > 0.1;
         if (gamepad1.left_trigger > 0.1 && !leftTriggerPressed && intake_angle < 2) {
-            intake_angle = 1 - intake_angle;
+            intake_angle = 0.6 - intake_angle;
             Intake_Angle.setPosition(intake_angle);
             manual = true;
         }
@@ -278,15 +278,15 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
         }
         rightBumperPressed = gamepad1.right_bumper;
         if (gamepad1.left_stick_button && !leftStickPressed){ //reset claw angle and intake angle
-            Claw_Angle.setPosition(0);
-            claw_angle = 0;
+            Intake_Angle.setPosition(0);
+            intake_angle = 0;
             servoResetTime = getRuntime();
             servoReset = true;
         }
         leftStickPressed = gamepad1.left_stick_button;
         if (servoReset && (getRuntime() > servoResetTime + 0.5)){
-            Intake_Angle.setPosition(0);
-            intake_angle = 0;
+            Claw_Angle.setPosition(0);
+            claw_angle = 0;
             servoReset = false;
         }
     }
@@ -344,7 +344,7 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
             target2 = 0;
             ARM2calibrated = true;
         }
-        else if (!ARM2calibrated && ARM1.getPower() != -0.2){
+        else if (!ARM2calibrated && ARM2.getPower() != -0.2){
             ARM2.setPower(-0.2);
         }
         telemetry.addData("We Are Heree","yesd");
@@ -357,8 +357,8 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
             ARM2.setPower(-0.2);
         }
         if (gamepad2.a) { //prepare for hang
-            target1 = 113.330920056;
-            target2 = 191.742752;
+            target1 = 111.330920056;
+            target2 = 172;
             hanging = true;
             hookUp = true;
         }

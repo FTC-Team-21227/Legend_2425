@@ -72,7 +72,7 @@ public class AUTON2025REDRIGHT_V2Robot_2 extends LinearOpMode {
         TrajectoryActionBuilder tab11 = drive.actionBuilder(new Pose2d(2, -39.3, Math.toRadians(90))) //park
                 .setTangent(Math.toRadians(-90))
                 .splineToConstantHeading(new Vector2d(2,-44.3),Math.toRadians(-90))
-                .splineToSplineHeading(new Pose2d(35,-65,Math.toRadians(0)),Math.toRadians(0));
+                .splineToSplineHeading(new Pose2d(35,-67,Math.toRadians(0)),Math.toRadians(0));
 
         Actions.runBlocking(
             new SequentialAction(

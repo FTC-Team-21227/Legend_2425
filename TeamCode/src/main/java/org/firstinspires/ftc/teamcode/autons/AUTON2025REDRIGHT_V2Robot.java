@@ -27,7 +27,7 @@ public class AUTON2025REDRIGHT_V2Robot extends LinearOpMode {
         CLAW_ANGLE claw_angle = new CLAW_ANGLE(hardwareMap);
         //5 spec auto attempt.
         TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose) //first specimen
-//                .waitSeconds(0.5)
+                .waitSeconds(0.5)
                 .setTangent(Math.toRadians(90))
                 .splineToConstantHeading(new Vector2d(9,-41.3),Math.toRadians(90));
         TrajectoryActionBuilder tab3 = drive.actionBuilder(new Pose2d(9, -41.3, Math.toRadians(90))) //push colored samples
@@ -38,10 +38,9 @@ public class AUTON2025REDRIGHT_V2Robot extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(53, -15),Math.toRadians(0))
                 .strafeTo(new Vector2d(53, -50))
                 .setTangent(Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(53, -20),Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(59,-15),Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(63, -20),Math.toRadians(-90))
-                .strafeTo(new Vector2d(63, -50))
+                .splineToConstantHeading(new Vector2d(53, -25),Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(62,-15),Math.toRadians(0))
+                .strafeTo(new Vector2d(62, -50))
                 .setTangent(Math.toRadians(120))
                 .splineToConstantHeading(new Vector2d(56,-20),Math.toRadians(90))
                 .splineToConstantHeading(new Vector2d(72,-15),Math.toRadians(0))
@@ -53,21 +52,21 @@ public class AUTON2025REDRIGHT_V2Robot extends LinearOpMode {
         TrajectoryActionBuilder tab6 = drive.actionBuilder(new Pose2d(44, -60, Math.toRadians(0))) //pick up and place second specimen
                 .waitSeconds(0.7) //CHANGED: reduced delay of movement (saves 1 s total)
                 .setTangent(Math.toRadians(140)) //CHANGED: diagonal initial tangent should make the robot follow a tighter curve and (more important) avoid the wall.
-                .splineToSplineHeading(new Pose2d(7,-39.3,Math.toRadians(90)),Math.toRadians(90));
-        TrajectoryActionBuilder tab7 = drive.actionBuilder(new Pose2d(7, -39.3, Math.toRadians(90))) //go to third specimen
+                .splineToSplineHeading(new Pose2d(7,-38.7,Math.toRadians(90)),Math.toRadians(90));
+        TrajectoryActionBuilder tab7 = drive.actionBuilder(new Pose2d(7, -38.7, Math.toRadians(90))) //go to third specimen
                 .setTangent(Math.toRadians(-90))
                 .splineToConstantHeading(new Vector2d(7,-44.3),Math.toRadians(-90))
-                .splineToSplineHeading(new Pose2d(34,-60,Math.toRadians(0)),Math.toRadians(0)) //CHANGED: robot returns to the wall at an angle as well.
-                .splineToConstantHeading(new Vector2d(44.5,-60),Math.toRadians(0),new TranslationalVelConstraint(10));
+                .splineToSplineHeading(new Pose2d(44.5,-60,Math.toRadians(0)),Math.toRadians(0)); //CHANGED: robot returns to the wall at an angle as well.
+//                .splineToConstantHeading(new Vector2d(44.5,-60),Math.toRadians(0),new TranslationalVelConstraint(10));
         TrajectoryActionBuilder tab8 = drive.actionBuilder(new Pose2d(44, -60, Math.toRadians(0))) //pick up and place third specimen
                 .waitSeconds(0.7)
                 .setTangent(Math.toRadians(140))
-                .splineToSplineHeading(new Pose2d(4,-39.3,Math.toRadians(90)),Math.toRadians(90));
-        TrajectoryActionBuilder tab9 = drive.actionBuilder(new Pose2d(4, -39.3, Math.toRadians(90))) //go to fourth specimen
+                .splineToSplineHeading(new Pose2d(4,-38.7,Math.toRadians(90)),Math.toRadians(90));
+        TrajectoryActionBuilder tab9 = drive.actionBuilder(new Pose2d(4, -38.7, Math.toRadians(90))) //go to fourth specimen
                 .setTangent(Math.toRadians(-90))
                 .splineToConstantHeading(new Vector2d(4,-44.3),Math.toRadians(-90))
-                .splineToSplineHeading(new Pose2d(34,-60,Math.toRadians(0)),Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(44.5,-60),Math.toRadians(0),new TranslationalVelConstraint(10));
+                .splineToSplineHeading(new Pose2d(44.5,-60,Math.toRadians(0)),Math.toRadians(0));
+//                .splineToConstantHeading(new Vector2d(44.5,-60),Math.toRadians(0),new TranslationalVelConstraint(10));
         TrajectoryActionBuilder tab10 = drive.actionBuilder(new Pose2d(44, -60, Math.toRadians(0))) //pick up and place fourth specimen
                 .waitSeconds(0.7)
                 .setTangent(Math.toRadians(140))
@@ -75,13 +74,13 @@ public class AUTON2025REDRIGHT_V2Robot extends LinearOpMode {
         TrajectoryActionBuilder tab11 = drive.actionBuilder(new Pose2d(2, -38, Math.toRadians(90))) //go to fifth specimen
                 .setTangent(Math.toRadians(-90))
                 .splineToConstantHeading(new Vector2d(2,-44.3),Math.toRadians(-90))
-                .splineToSplineHeading(new Pose2d(34,-60,Math.toRadians(0)),Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(44.5,-60),Math.toRadians(0),new TranslationalVelConstraint(10));
+                .splineToSplineHeading(new Pose2d(44.5,-60,Math.toRadians(0)),Math.toRadians(0));
+//                .splineToConstantHeading(new Vector2d(44.5,-60),Math.toRadians(0),new TranslationalVelConstraint(10));
         TrajectoryActionBuilder tab12 = drive.actionBuilder(new Pose2d(44, -60, Math.toRadians(0))) //pick up and place fifth specimen
                 .waitSeconds(0.7)
                 .setTangent(Math.toRadians(140))
-                .splineToSplineHeading(new Pose2d(-2,-39.3,Math.toRadians(90)),Math.toRadians(90));
-        TrajectoryActionBuilder tab13 = drive.actionBuilder(new Pose2d(-2, -39.3, Math.toRadians(90))) //park
+                .splineToSplineHeading(new Pose2d(-2,-38.7,Math.toRadians(90)),Math.toRadians(90));
+        TrajectoryActionBuilder tab13 = drive.actionBuilder(new Pose2d(-2, -38.7, Math.toRadians(90))) //park
                 .setTangent(Math.toRadians(-90))
                 .splineToConstantHeading(new Vector2d(-2,-44.3),Math.toRadians(-90))
                 .splineToSplineHeading(new Pose2d(35,-60,Math.toRadians(0)),Math.toRadians(0));

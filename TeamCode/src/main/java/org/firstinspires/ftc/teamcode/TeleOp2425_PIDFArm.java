@@ -146,6 +146,8 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
                 telemetry.addData("Intake angle", Intake_Angle.getPosition());
                 telemetry.addData("ARM1 Power", ARM1.getPower());
                 telemetry.addData("ARM2 Power", ARM2.getPower());
+                telemetry.addData("ARM1 Sensor", ARM1Sensor);
+                telemetry.addData("ARM2 Sensor", ARM2Sensor);
 
 
                 telemetry.update();
@@ -207,9 +209,9 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
             target1 = 0;
             ARM1calibrated = true;
         }
-//        else if (!ARM1calibrated){
-//            ARM1.setPower(-0.2);
-//        }
+        else if (!ARM1calibrated && ARM1.getPower() != -0.2){
+            ARM1.setPower(-0.2);
+        }
         if (!ARM2Sensor.isPressed() && !ARM2calibrated) {
             ARM2.setPower(0);
             ARM2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -218,9 +220,10 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
             target2 = 0;
             ARM2calibrated = true;
         }
-//        else if (!ARM2calibrated){
-//            ARM2.setPower(-0.2);
-//        }
+        else if (!ARM2calibrated && ARM2.getPower() != -0.2){
+            ARM2.setPower(-0.2);
+        }
+        telemetry.addData("We Are Heree","yesd");
     }
     private void ARM_SetTargets() {
 //            telemetry.addData("We Are Heree","yesd");
@@ -232,7 +235,7 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
         }
         if (gamepad2.a) { //prepare for hang
             target1 = 113.330920056;
-            target2 = 191.742752;
+            target2 = 172;
             hanging = true;
         }
         if (gamepad2.b) { //hang
