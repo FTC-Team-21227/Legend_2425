@@ -36,7 +36,7 @@ public class AUTON2025REDRIGHT_V2Robot_2 extends LinearOpMode {
         TrajectoryActionBuilder tab3 = drive.actionBuilder(new Pose2d(9, -41.3, Math.toRadians(90))) //push colored samples
                 .setTangent(Math.toRadians(-90))
                 //improved, we want 1 s shape
-                .splineToConstantHeading(new Vector2d(10,-45),Math.toRadians(-90))
+                .splineToConstantHeading(new Vector2d(9,-45),Math.toRadians(-90))
                 .splineToConstantHeading(new Vector2d(46.5, -27),Math.toRadians(90))
                 .splineToConstantHeading(new Vector2d(53, -15),Math.toRadians(0)) //make u's of this
                 .strafeTo(new Vector2d(53, -50)) //y value may need to be changed
@@ -72,7 +72,7 @@ public class AUTON2025REDRIGHT_V2Robot_2 extends LinearOpMode {
         TrajectoryActionBuilder tab11 = drive.actionBuilder(new Pose2d(2, -39.3, Math.toRadians(90))) //park
                 .setTangent(Math.toRadians(-90))
                 .splineToConstantHeading(new Vector2d(2,-44.3),Math.toRadians(-90))
-                .splineToSplineHeading(new Pose2d(35,-67,Math.toRadians(0)),Math.toRadians(0));
+                .splineToSplineHeading(new Pose2d(37,-62,Math.toRadians(-15)),Math.toRadians(0));
 
         Actions.runBlocking(
             new SequentialAction(
@@ -158,8 +158,8 @@ public class AUTON2025REDRIGHT_V2Robot_2 extends LinearOpMode {
                         claw.openClaw(),
                         new ParallelAction(
                             eleventhTrajectory,
-                            arm1.waitLiftFloor(),
-                            arm2.waitLiftFloor()
+                            arm1.waitLiftWall(),
+                            arm2.waitLiftWall()
                         )
                 )
         );

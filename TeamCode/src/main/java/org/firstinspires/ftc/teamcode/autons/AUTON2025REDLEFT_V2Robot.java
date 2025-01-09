@@ -38,9 +38,9 @@ public class AUTON2025REDLEFT_V2Robot extends LinearOpMode{
                 .waitSeconds(0.7);
         TrajectoryActionBuilder tab5 = drive.actionBuilder(new Pose2d(9, 112, Math.toRadians(-45)))
                 .waitSeconds(0.5)
-                .strafeToLinearHeading(new Vector2d(9.2, 119), Math.toRadians(0)); //get 2nd sample from the left side
+                .strafeToLinearHeading(new Vector2d(9.4, 119), Math.toRadians(0)); //get 2nd sample from the left side
 //                .strafeTo(new Vector2d(10.5, 119.5)); //get 1st sample
-        TrajectoryActionBuilder tab6 = drive.actionBuilder(new Pose2d(9.2, 119, Math.toRadians(0)))
+        TrajectoryActionBuilder tab6 = drive.actionBuilder(new Pose2d(9.4, 119, Math.toRadians(0)))
                 .waitSeconds(1.5)
                 .strafeToLinearHeading(new Vector2d(8.5, 112), Math.toRadians(-45)) //go away from wall bec arms lifting
                 .waitSeconds(0.7);
@@ -56,8 +56,8 @@ public class AUTON2025REDLEFT_V2Robot extends LinearOpMode{
                 .waitSeconds(0.7);
         TrajectoryActionBuilder tab9 = drive.actionBuilder(new Pose2d(8.5, 112, Math.toRadians(-45)))
                 .waitSeconds(0.5)
-                .strafeToSplineHeading(new Vector2d(54, 96), Math.toRadians(-90))//avoid bumping into submersible
-                .strafeTo(new Vector2d(54, 90)); //touch bar
+                .strafeToSplineHeading(new Vector2d(52, 96), Math.toRadians(-90))//avoid bumping into submersible
+                .strafeTo(new Vector2d(52, 90)); //touch bar
         Actions.runBlocking(
                 new ParallelAction(
             claw.closeClaw(),
@@ -135,6 +135,7 @@ public class AUTON2025REDLEFT_V2Robot extends LinearOpMode{
                         ),
                         claw.openClaw(),
                         new ParallelAction(
+                            claw_angle.forward(),
                             ninthTrajectory,
                             arm1.waitLiftRung(1.5),
                             arm2.waitLiftRung(1.5)

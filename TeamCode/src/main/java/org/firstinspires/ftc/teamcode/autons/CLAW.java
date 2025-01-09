@@ -11,7 +11,7 @@ public class CLAW {
     private Servo Claw;
     public CLAW(HardwareMap hardwareMap) {
         Claw = hardwareMap.get(Servo.class, "Claw");
-        Claw.scaleRange(0.2,0.8);
+        Claw.scaleRange(0.45,0.9);
     }
 
     public class CloseClaw implements Action {

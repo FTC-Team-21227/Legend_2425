@@ -42,7 +42,7 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
     private final double m1 = 810;
     private final double m2 = 99.79;
     private final double highBasket = 97.854286777;
-    private final double highRung = 2.6781;
+    private final double highRung = 3.3954; //2.6781
 
     private final double wall = 15.0642;
     private final double lowBasket = 50; //not tested
@@ -51,7 +51,7 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
     private final double highBasket2 = 131.0525;
     private final double highRung2 = 90.2671;
 
-    private final double wall2 = 156.749;
+    private final double wall2 = 154.8883;
     private final double lowBasket2 = 50; //not tested
     private final double floor2 = 159.8503;
     private final double down2 = 5.0199819357;
@@ -98,8 +98,8 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
     boolean hookUp = false;
     boolean hookDown = false;
     int claw = 0;
-    int claw_angle = 2;
-    double intake_angle = 2;
+    int claw_angle = 0;
+    double intake_angle = 0;
     boolean servoReset = false;
     double servoResetTime;
     /**
@@ -135,8 +135,8 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
         // Put initialization blocks here.
         Initialization();
         if (opModeIsActive()) {
-//            Claw_Angle.setPosition(0);
-//            Intake_Angle.setPosition(1);
+            Claw_Angle.setPosition(0);
+            Intake_Angle.setPosition(0);
 //            Claw.setPosition(0);
             // Put run blocks here.
             while (opModeIsActive()) {
@@ -166,7 +166,8 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
                 Hook_Control();
                 //reset imu if necessary
                 if (gamepad1.back) {
-//                    imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD)));
+                    imu = hardwareMap.get(IMU.class, "imu");
+                    imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD)));
                     imu.resetYaw();
                     initialHeading = 0;
                     Targeting_Angle = 0;
@@ -303,6 +304,9 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
         }
         if (getRuntime() > tim+1.5) {
             Hook.setPower(0);
+            if (hanging){
+                target2 = highRung2;
+            }
         }
     }
     private void ARM_PID_Control(){
@@ -357,9 +361,9 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
             ARM2.setPower(-0.2);
         }
         if (gamepad2.a) { //prepare for hang
-            target1 = 111.330920056;
+            target1 = 111.830920056; //111.330920056
             target2 = 172;
-            hanging = true;
+//            hanging = true;
             hookUp = true;
         }
         if (gamepad2.b) { //hang
@@ -425,9 +429,9 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
             target1 = down;
             target2 = down2;
         }
-        if (gamepad1.right_stick_y < -0.7) { //manual control of ARM1
+        if (gamepad1.right_stick_y < -0.95) { //manual control of ARM1
             target1 += 0.89667631977;
-        } else if (gamepad1.right_stick_y > 0.7) {
+        } else if (gamepad1.right_stick_y > 0.95) {
             target1 -= 0.89667631977;
         }
         if (gamepad1.dpad_up) { //manual control of ARM2
@@ -488,11 +492,11 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
         target2 = ARM2.getCurrentPosition()/ticks_in_degree_2;
         telemetry.addData("Claw",Claw.getPosition());
         telemetry.update();
-        Claw.scaleRange(0.2,0.8);
+        Claw.scaleRange(0.45,0.9);
         Claw_Angle.scaleRange(0.04, 0.7);
 
 
-        Motor_Power = 0.6;
+        Motor_Power = 0.5;
         Targeting_Angle = initialHeading;
         Lift_Power = 0.3;
         // Initialize the IMU with non-default settings. To use this block,
@@ -550,7 +554,7 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
             Motor_Side_input = -x * mag;
             Motor_fwd_power = Math.cos(Heading_Angle / 180 * Math.PI) * Motor_FWD_input - Math.sin(Heading_Angle / 180 * Math.PI) * Motor_Side_input;
             Motor_side_power = (Math.cos(Heading_Angle / 180 * Math.PI) * Motor_Side_input + Math.sin(Heading_Angle / 180 * Math.PI) * Motor_FWD_input) * 1.5;
-            Motor_Rotation_power = gamepad1.right_stick_x * 0.7 + imu_rotation;
+            Motor_Rotation_power = gamepad1.right_stick_x * 0.7 + imu_rotation; //0.5
             Motor_power_BL = -(((Motor_fwd_power - Motor_side_power) - Motor_Rotation_power) * Motor_Power);
             Motor_power_BR = -((Motor_fwd_power + Motor_side_power + Motor_Rotation_power) * Motor_Power);
             Motor_power_FL = -(((Motor_fwd_power + Motor_side_power) - Motor_Rotation_power) * Motor_Power);
