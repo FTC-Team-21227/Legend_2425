@@ -28,8 +28,8 @@ public class AUTON2025REDRIGHT_V2Robot extends LinearOpMode {
         TrajectoryActionBuilder tab1 = drive.actionBuilder(initialPose) //first specimen
                 .waitSeconds(0.3)
                 .setTangent(Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(9,-41.3),Math.toRadians(90));
-        TrajectoryActionBuilder tab3 = drive.actionBuilder(new Pose2d(9, -41.3, Math.toRadians(90))) //push colored samples
+                .splineToConstantHeading(new Vector2d(9,-39.3),Math.toRadians(90));
+        TrajectoryActionBuilder tab3 = drive.actionBuilder(new Pose2d(9, -39.3, Math.toRadians(90))) //push colored samples
                 .setTangent(Math.toRadians(-90))
                 //improved, we want 1 s shape
                 .splineToConstantHeading(new Vector2d(9,-45),Math.toRadians(-90))
@@ -40,7 +40,7 @@ public class AUTON2025REDRIGHT_V2Robot extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(53, -20),Math.toRadians(90))
                 .splineToConstantHeading(new Vector2d(59,-15),Math.toRadians(0))
                 .splineToConstantHeading(new Vector2d(63, -20),Math.toRadians(-90))
-                .strafeTo(new Vector2d(63, -50))
+                .strafeTo(new Vector2d(63, -50),new TranslationalVelConstraint(50))
                 .setTangent(Math.toRadians(120))
                 .splineToConstantHeading(new Vector2d(54,-20),Math.toRadians(90))
                 .splineToConstantHeading(new Vector2d(72,-15),Math.toRadians(0))

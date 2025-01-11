@@ -66,4 +66,29 @@ public class CLAW_ANGLE {
     public Action backward() {
         return new Backward();
     }
+    public class Backward2 implements Action {
+        ElapsedTime time = new ElapsedTime();
+        boolean start;
+        double runTime;
+        public Backward2(){
+            start = false;
+            runTime = 1;
+        }
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            if (!start) {
+                time.reset();
+                start = true;
+            }
+            if (time.seconds() < runTime) {
+                return true;
+            } else {
+                Claw_Angle.setPosition(1);
+                return false;
+            }
+        }
+    }
+    public Action backward2() {
+        return new Backward2();
+    }
 }

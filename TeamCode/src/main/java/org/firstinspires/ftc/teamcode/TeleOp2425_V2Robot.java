@@ -49,9 +49,9 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
     private final double floor = 0.6217;
     private final double down = 4.48338159887;
     private final double highBasket2 = 131.0525;
-    private final double highRung2 = 90.2671;
+    private final double highRung2 = 91.7102; //94.457; //90.381; //92.6; //90.2671;
 
-    private final double wall2 = 154.8883;
+    private final double wall2 = 157.0149; //154.8883;
     private final double lowBasket2 = 50; //not tested
     private final double floor2 = 159.8503;
     private final double down2 = 5.0199819357;
@@ -415,11 +415,11 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
             manual = false;
         }
         if (gamepad1.start && gamepad1.left_bumper){
-            target1 = 4.85998565318;
+            target1 = 6.4322;
             target2 = 154.721207477;
         }
         else if (gamepad1.start) { //into submersible (not needed bc wall preset?)
-            target1 = 4.85998565318;
+            target1 = 8.1777; //6.4322;
             target2 = 154.721207477;
             stateTime = getRuntime();
             state = "enterSub";
