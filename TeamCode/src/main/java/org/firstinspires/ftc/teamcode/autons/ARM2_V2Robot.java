@@ -28,11 +28,11 @@ public class ARM2_V2Robot {
     private final double m1 = 810;
     private final double m2 = 99.79;
     private final double highBasket2 = 131.0525;
-    private final double highRung2 = 91.7102;//94.457; //90.381; //92.6;
-    private final double wall2 = 157.0149; //154.8883; //156.749
+    private final double highRung2 = 90.381; //91.7102;//94.457; //90.381; //92.6;
+    private final double wall2 = 154.8883; //157.0149; //154.8883; //156.749
     private final double wall2_2 = 0;
     private final double lowBasket2 = 50; //not tested
-    private final double floor2 = 160.8503;
+    private final double floor2 = 159.8503;
     private final double down2 = 5.0199819357;
 
     public ARM2_V2Robot(HardwareMap hardwareMap) {

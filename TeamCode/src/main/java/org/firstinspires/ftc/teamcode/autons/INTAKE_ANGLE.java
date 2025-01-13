@@ -17,7 +17,7 @@ public class INTAKE_ANGLE {
     public class RotatePosition0 implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            Intake_Angle.setPosition(0.28); //0.65
+            Intake_Angle.setPosition(0.26); //0.28 //0.65
             return false;
         }
     }

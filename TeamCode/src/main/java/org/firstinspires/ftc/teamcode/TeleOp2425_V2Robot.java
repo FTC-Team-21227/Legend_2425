@@ -45,14 +45,12 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
     private final double highRung = 3.3954; //2.6781
 
     private final double wall = 15.0642;
-    private final double lowBasket = 50; //not tested
     private final double floor = 0.6217;
     private final double down = 4.48338159887;
     private final double highBasket2 = 131.0525;
-    private final double highRung2 = 91.7102; //94.457; //90.381; //92.6; //90.2671;
+    private final double highRung2 = 90.381; //91.7102; //94.457; //90.381; //92.6; //90.2671;
 
-    private final double wall2 = 157.0149; //154.8883;
-    private final double lowBasket2 = 50; //not tested
+    private final double wall2 = 154.8883; //157.0149; //154.8883;
     private final double floor2 = 159.8503;
     private final double down2 = 5.0199819357;
     private DcMotor W_BL;
@@ -314,7 +312,7 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
         arm1Pos = ARM1.getCurrentPosition();
         double pid1 = controller1.calculate(arm1Pos,(int)(target1*ticks_in_degree_1)); //PID calculation
         double ff1 = (m1*Math.cos(Math.toRadians(target1))*x1 +
-        m2*Math.cos(Math.atan(((x2*Math.sin(Math.toRadians(target1+target2)))+(L1*Math.sin(Math.toRadians(Math.toRadians(target1)))))/((L1*Math.cos(Math.toRadians(target1)))+(x2*Math.cos(Math.toRadians(target1+target2))))))*
+        m2*Math.cos(Math.atan(((x2*Math.sin(Math.toRadians(target1+target2)))+(L1*Math.sin(Math.toRadians(target1))))/((L1*Math.cos(Math.toRadians(target1)))+(x2*Math.cos(Math.toRadians(target1+target2))))))*
         Math.sqrt(Math.pow((x2*Math.sin(Math.toRadians(target1+target2))+L1*Math.sin(Math.toRadians(target1))),2)+Math.pow((x2*Math.cos(Math.toRadians(target1+target2))+L1*Math.cos(Math.toRadians(target1))),2))) * f1; // feedforward calculation, change when equation is derived
         double power1 = pid1 + ff1;
         //telemetry.addData("ff1",ff1);
@@ -481,7 +479,7 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
         W_FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         W_BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         W_BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        Intake_Angle.scaleRange(0.28, 0.8);
+        Intake_Angle.scaleRange(0.26, 0.8);
         ARM1.setDirection(DcMotor.Direction.REVERSE);
         ARM1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         ARM1.setPower(0);

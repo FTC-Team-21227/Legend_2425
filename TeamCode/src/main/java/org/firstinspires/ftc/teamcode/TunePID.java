@@ -21,7 +21,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @Config
-//@TeleOp
+@TeleOp
 public class TunePID extends OpMode {
     private DcMotorEx ARM1; //bottom arm
     private DcMotorEx ARM2; //top arm
@@ -31,7 +31,7 @@ public class TunePID extends OpMode {
     //PIDF gains
     public static double p1 = 0.008, i1 = 0.001, d1 = 0.0001;
     public static double f1 = 0.000001;
-    public static double p2 = 0.01, i2 = 0.0001, d2 = 0.0003;
+    public static double p2 = 0.01, i2 = 0.0001, d2 = 0.0006;
     public static double f2 = 0;
     //ARM1, ARM2 target positions, in degrees
     public static double target1 = 0;
@@ -61,7 +61,7 @@ public class TunePID extends OpMode {
         int arm1Pos = ARM1.getCurrentPosition();
         double pid1 = controller1.calculate(arm1Pos,(int)(target1*ticks_in_degree_1)); //PID calculation
         double ff1 = (m1*Math.cos(Math.toRadians(target1))*x1 +
-        m2*Math.cos(Math.atan(((x2*Math.sin(Math.toRadians(target1+target2)))+(L1*Math.sin(Math.toRadians(Math.toRadians(target1)))))/((L1*Math.cos(Math.toRadians(target1)))+(x2*Math.cos(Math.toRadians(target1+target2))))))*
+        m2*Math.cos(Math.atan(((x2*Math.sin(Math.toRadians(target1+target2)))+(L1*Math.sin(Math.toRadians(target1))))/((L1*Math.cos(Math.toRadians(target1)))+(x2*Math.cos(Math.toRadians(target1+target2))))))*
         Math.sqrt(Math.pow((x2*Math.sin(Math.toRadians(target1+target2))+L1*Math.sin(Math.toRadians(target1))),2)+Math.pow((x2*Math.cos(Math.toRadians(target1+target2))+L1*Math.cos(Math.toRadians(target1))),2))) * f1; // feedforward calculation, change when equation is derived
         double power1 = pid1 + ff1;
         ARM1.setPower(power1); //set the power
