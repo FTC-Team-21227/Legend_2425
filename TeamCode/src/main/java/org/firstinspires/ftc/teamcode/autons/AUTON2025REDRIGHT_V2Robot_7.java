@@ -40,16 +40,17 @@ public class AUTON2025REDRIGHT_V2Robot_7 extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(46.5, -27),Math.toRadians(90))
                 .splineToConstantHeading(new Vector2d(53, -15),Math.toRadians(0)) //make u's of this
                 .setTangent(Math.toRadians(-90))
-                .splineToConstantHeading(new Vector2d(53, -45),Math.toRadians(-90)) //y value may need to be changed
+                .splineToConstantHeading(new Vector2d(53, -45),Math.toRadians(-90)) //y value may need to be changed, push 1st
 //                .setTangent(Math.toRadians(90))
                 .splineToConstantHeading(new Vector2d(53, -25),Math.toRadians(60))
-                .splineToConstantHeading(new Vector2d(69, -12),Math.toRadians(0))
-                .setTangent(-90)
-                .splineToConstantHeading(new Vector2d(63, -40),Math.toRadians(-90))
-                .splineToConstantHeading(new Vector2d(63, -25),Math.toRadians(60))
-                .splineToConstantHeading(new Vector2d(72, -12),Math.toRadians(0));
-        TrajectoryActionBuilder tab5 = drive.actionBuilder(new Pose2d(72, -12, Math.toRadians(90))) //go to second specimen
-                .splineToConstantHeading(new Vector2d(72,-54),Math.toRadians(-90))
+                .splineToConstantHeading(new Vector2d(66, -12),Math.toRadians(0))
+                .setTangent(Math.toRadians(-90))
+                .splineToConstantHeading(new Vector2d(65, -47),Math.toRadians(-90)) //push 2nd
+                .setTangent(Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(66, -25),Math.toRadians(60))
+                .splineToConstantHeading(new Vector2d(69, -12),Math.toRadians(0));
+        TrajectoryActionBuilder tab5 = drive.actionBuilder(new Pose2d(70, -47, Math.toRadians(90))) //go to second specimen
+                .splineToConstantHeading(new Vector2d(50,-54),Math.toRadians(-90))
                 .splineToSplineHeading(new Pose2d(40,-54,Math.toRadians(0)),Math.toRadians(180)) //improved to a single movement
                 .strafeTo(new Vector2d(45,-54),new TranslationalVelConstraint(10));
         TrajectoryActionBuilder tab6 = drive.actionBuilder(new Pose2d(44.5, -60, Math.toRadians(0))) //pick up and place second specimen
