@@ -35,4 +35,15 @@ public class CLAW {
     public Action openClaw() {
         return new OpenClaw();
     }
+
+    public class OpenSlightly implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            Claw.setPosition(0.5);
+            return false;
+        }
+    }
+    public Action openSlightly() {
+        return new OpenSlightly();
+    }
 }

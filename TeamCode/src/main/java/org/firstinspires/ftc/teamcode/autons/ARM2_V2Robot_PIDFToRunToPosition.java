@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.TunePID;
 
-public class ARM2_V2Robot {
+public class ARM2_V2Robot_PIDFToRunToPosition {
     private DcMotor arm2;
     //PID controllers for ARM1 and ARM2
     private PIDController controller2;
@@ -28,14 +28,14 @@ public class ARM2_V2Robot {
     private final double m1 = 810;
     private final double m2 = 99.79;
     private final double highBasket2 = 131.0525;
-    private final double highRung2 = 88.72; //90.381; //91.7102;//94.457; //90.381; //92.6;
+    private final double highRung2 = 90.381; //91.7102;//94.457; //90.381; //92.6;
     private final double wall2 = 154.8883; //157.0149; //154.8883; //156.749
     private final double wall2_2 = 0;
     private final double lowBasket2 = 50; //not tested
     private final double floor2 = 159.8503;
     private final double down2 = 5.0199819357;
 
-    public ARM2_V2Robot(HardwareMap hardwareMap) {
+    public ARM2_V2Robot_PIDFToRunToPosition(HardwareMap hardwareMap) {
         arm2 = hardwareMap.get(DcMotor.class, "ARM2");
         arm2.setDirection(DcMotor.Direction.REVERSE); //CHANGE BACK TO DCMOTORSIMPLE IF SOMETHING DOESN'T WORK
         arm2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -82,7 +82,8 @@ public class ARM2_V2Robot {
                 arm2.setPower(power);
                 return true;
             } else {
-                arm2.setPower(0);
+                arm2.setTargetPosition((int)(target2*ticks_in_degree_2));
+                arm2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 return false;
             }
         }
@@ -163,7 +164,8 @@ public class ARM2_V2Robot {
                 }
                 return true;
             } else {
-                arm2.setPower(0);
+                arm2.setTargetPosition((int)(target2*ticks_in_degree_2));
+                arm2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 return false;
             }
         }

@@ -48,7 +48,7 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
     private final double floor = 0.6217;
     private final double down = 4.48338159887;
     private final double highBasket2 = 131.0525;
-    private final double highRung2 = 90.381; //91.7102; //94.457; //90.381; //92.6; //90.2671;
+    private final double highRung2 = 88.72; //90.381; //91.7102; //94.457; //90.381; //92.6; //90.2671;
 
     private final double wall2 = 154.8883; //157.0149; //154.8883;
     private final double floor2 = 159.8503;

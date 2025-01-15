@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class CLAW_LEFT {
     private Servo Claw;
@@ -34,5 +35,15 @@ public class CLAW_LEFT {
     }
     public Action openClaw() {
         return new OpenClaw();
+    }
+    public class OpenSlightly implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            Claw.setPosition(0.8);
+            return false;
+        }
+    }
+    public Action openSlightly() {
+        return new OpenSlightly();
     }
 }

@@ -31,7 +31,7 @@ public class TunePID extends OpMode {
     //PIDF gains
     public static double p1 = 0.008, i1 = 0.001, d1 = 0.0001;
     public static double f1 = 0.000001;
-    public static double p2 = 0.01, i2 = 0.0001, d2 = 0.0006;
+    public static double p2 = 0.01, i2 = 0.0001, d2 = 0.0005;
     public static double f2 = 0;
     //ARM1, ARM2 target positions, in degrees
     public static double target1 = 0;
