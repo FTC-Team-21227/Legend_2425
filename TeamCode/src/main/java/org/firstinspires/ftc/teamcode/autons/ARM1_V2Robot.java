@@ -28,7 +28,7 @@ public class ARM1_V2Robot {
     private final double m1 = 810;
     private final double m2 = 99.79;
     private final double highBasket = 97.854286777;
-    private final double highRung = 3.3954;
+    private final double highRung = 3.3954; //2.5585;
 
     private final double wall = 15.0642;
     private final double wall2 = 80; //not tested
@@ -115,6 +115,7 @@ public class ARM1_V2Robot {
         double waitTime;
         double runTime;
         boolean startMove;
+        double power = 1;
         public waitLiftTarget(double pos){
             target1 = pos;
             start = false;
@@ -136,6 +137,14 @@ public class ARM1_V2Robot {
             waitTime = tim;
             runTime = runtime;
         }
+        public waitLiftTarget(double pos, double tim, double runtime, double pwr){
+            target1 = pos;
+            start = false;
+            startMove = false;
+            waitTime = tim;
+            runTime = runtime;
+            power = pwr;
+        }
         public double ARM_Control_PID(@NonNull TelemetryPacket packet /*NEW*/){
             double target2 = PoseStorage.target2; //NEW
             packet.addLine("target2pos1:"+target2); //NEW
@@ -144,7 +153,7 @@ public class ARM1_V2Robot {
             double ff1 = (m1*Math.cos(Math.toRadians(target1))*x1 +
             /*NEW*/        m2*Math.cos(Math.atan(((x2*Math.sin(Math.toRadians(target1+target2)))+(L1*Math.sin(Math.toRadians(Math.toRadians(target1)))))/((L1*Math.cos(Math.toRadians(target1)))+(x2*Math.cos(Math.toRadians(target1+target2))))))*
                             Math.sqrt(Math.pow((x2*Math.sin(Math.toRadians(target1+target2))+L1*Math.sin(Math.toRadians(target1))),2)+Math.pow((x2*Math.cos(Math.toRadians(target1+target2))+L1*Math.cos(Math.toRadians(target1))),2))) * f1; // feedforward calculation
-            return ((pid1+ff1));
+            return ((pid1+ff1)) * power;
         }
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
@@ -200,4 +209,5 @@ public class ARM1_V2Robot {
     public Action waitLiftLowBasket(double waitseconds, double seconds) {return new waitLiftTarget(lowBasket, waitseconds, seconds);} //not tested i think
     public Action waitLiftFloor(double waitseconds, double seconds) {return new waitLiftTarget(floor, waitseconds, seconds);}
     public Action waitLiftDown(double waitseconds, double seconds) {return new waitLiftTarget(down, waitseconds, seconds);}
+    public Action waitLiftFloor(double waitseconds, double seconds, double power) {return new waitLiftTarget(floor, waitseconds, seconds, power);}
 }

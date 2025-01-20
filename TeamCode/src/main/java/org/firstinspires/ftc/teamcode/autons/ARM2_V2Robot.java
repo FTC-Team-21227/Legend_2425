@@ -28,8 +28,8 @@ public class ARM2_V2Robot {
     private final double m1 = 810;
     private final double m2 = 99.79;
     private final double highBasket2 = 131.0525;
-    private final double highRung2 = 88.72; //90.381; //91.7102;//94.457; //90.381; //92.6;
-    private final double wall2 = 154.8883; //157.0149; //154.8883; //156.749
+    final double highRung2 = 91-0.722; //91; //90.7355; //90.2924; // 88.72; //87.1025; //90.381; //91.7102;//94.457; //90.381; //92.6;
+    private final double wall2 = 156.4382; //157.9896;// 154.8883; //157.0149; //154.8883; //156.749
     private final double wall2_2 = 0;
     private final double lowBasket2 = 50; //not tested
     private final double floor2 = 159.8503;
@@ -48,6 +48,7 @@ public class ARM2_V2Robot {
         boolean start;
         double target2;
         double runTime;
+        double power = 1;
         public LiftTarget(double pos) {
             target2 = pos;
             start = false;
@@ -58,11 +59,17 @@ public class ARM2_V2Robot {
             start = false;
             runTime = runtime;
         }
+        public LiftTarget(double pos, double runtime, double pwr) {
+            target2 = pos;
+            start = false;
+            runTime = runtime;
+            power = pwr;
+        }
         public double ARM_Control_PID() {
             int arm2Pos = arm2.getCurrentPosition();
             double pid2 = controller2.calculate(arm2Pos, (int) (target2 * ticks_in_degree_2)); //PID calculation
             double ff2 = 0; //feedforward calculation, change when equation is derived
-            return ((pid2/* + ff2*/));
+            return ((pid2/* + ff2*/)) * power;
         }
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
@@ -101,6 +108,8 @@ public class ARM2_V2Robot {
     public Action liftLowBasket(double seconds) {return new LiftTarget(lowBasket2, seconds);} //not tested i think
     public Action liftFloor(double seconds) {return new LiftTarget(floor2, seconds);}
     public Action liftDown(double seconds) {return new LiftTarget(down2, seconds);}
+    public Action liftRung(double seconds, double power) {return new LiftTarget(highRung2, seconds, power);}
+    public Action liftRungFirst(double seconds, double power) {return new LiftTarget(highRung2+0.75,seconds,power);}
 
     public class waitLiftTarget implements Action {
         ElapsedTime time = new ElapsedTime();

@@ -111,10 +111,10 @@ public class TeleOp2425_PIDFArm extends LinearOpMode {
                 if (!(ARM1calibrated && ARM2calibrated)) {
                     ARM_Calibration(); //calibration function
                 }
-                else {
-                    ARM_SetTargets(); //gamepad presets and other things to set the target positions for each arm motor
-                    ARM_PID_Control(); //PID control function based on target positions
-                }
+//                else {
+//                    ARM_SetTargets(); //gamepad presets and other things to set the target positions for each arm motor
+//                    ARM_PID_Control(); //PID control function based on target positions
+//                }
                 //controls the intake servos
                 Intake_Control();
                 //controls the hook servo

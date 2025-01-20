@@ -348,6 +348,11 @@ public final class MecanumDrive { //two dead wheel + imu
             p.put("yError", error.position.y);
             p.put("headingError (deg)", Math.toDegrees(error.heading.toDouble()));
 
+            p.put("Motor Power FL", leftFrontPower);
+            p.put("Motor Power BL", leftBackPower);
+            p.put("Motor Power BR", rightBackPower);
+            p.put("Motor Power FR", rightFrontPower);
+
             // only draw when active; only one drive action should be active at a time
             Canvas c = p.fieldOverlay();
             drawPoseHistory(c);

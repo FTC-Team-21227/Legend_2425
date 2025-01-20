@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
-@Autonomous(name = "AUTONRIGHT_V2Robot_5spec")
+//@Autonomous(name = "AUTONRIGHT_V2Robot_5spec")
 //5 spec with new V2 Robot, using a different wall pickup position.
 public class AUTON2025REDRIGHT_V2Robot_4 extends LinearOpMode {
     @Override

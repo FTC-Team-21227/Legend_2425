@@ -42,15 +42,15 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
     private final double m1 = 810;
     private final double m2 = 99.79;
     private final double highBasket = 97.854286777;
-    private final double highRung = 3.3954; //2.6781
+    private final double highRung = 3.3954; //2.5585; //2.6781
 
     private final double wall = 15.0642;
     private final double floor = 0.6217;
     private final double down = 4.48338159887;
     private final double highBasket2 = 131.0525;
-    private final double highRung2 = 88.72; //90.381; //91.7102; //94.457; //90.381; //92.6; //90.2671;
+    private final double highRung2 = 91-0.722; //90.7355; //88.72; //87.1025;  //90.381; //91.7102; //94.457; //90.381; //92.6; //90.2671;
 
-    private final double wall2 = 154.8883; //157.0149; //154.8883;
+    private final double wall2 = 156.4382; //154.8883; //157.0149; //154.8883;
     private final double floor2 = 159.8503;
     private final double down2 = 5.0199819357;
     private DcMotor W_BL;
@@ -64,6 +64,7 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
     private Servo Intake_Angle;
     private Servo Claw;
     private Servo Claw_Angle;
+    private Servo Sweeper;
     private TouchSensor ARM1Sensor;
     private TouchSensor ARM2Sensor;
 
@@ -93,13 +94,16 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
     boolean leftTriggerPressed = false;
     boolean rightBumperPressed = false;
     boolean leftStickPressed = false;
+    boolean rightTrigger2Pressed = false;
     boolean hookUp = false;
     boolean hookDown = false;
     int claw = 0;
     int claw_angle = 0;
     double intake_angle = 0;
+    int sweeper = 0;
     boolean servoReset = false;
     double servoResetTime;
+    double Lift_Power = 1;
     /**
      * This function is executed when this Op Mode is selected from the Driver Station.
      */
@@ -127,6 +131,7 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
         Claw = hardwareMap.get(Servo.class, "Claw");
         Intake_Angle = hardwareMap.get(Servo.class,"Intake_Angle");
         Claw_Angle = hardwareMap.get(Servo.class,"Claw_Angle");
+//        Sweeper = hardwareMap.get(Servo.class,"Sweeper");
         ARM1Sensor = hardwareMap.get(TouchSensor.class, "ARM1Sensor");
         ARM2Sensor = hardwareMap.get(TouchSensor.class, "ARM2Sensor");
 
@@ -136,6 +141,7 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
             Claw_Angle.setPosition(0);
             Intake_Angle.setPosition(0);
 //            Claw.setPosition(0);
+//            Sweeper.setPosition(0);
             // Put run blocks here.
             while (opModeIsActive()) {
                 // Put loop blocks here.
@@ -303,11 +309,20 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
         if (getRuntime() > tim+1.5) {
             Hook.setPower(0);
             if (hanging){
-                target2 = highRung2;
+                target2 = highRung2-20;
             }
         }
+        if (gamepad2.right_trigger > 0.1 && !rightTrigger2Pressed) {
+            sweeper = 1 - sweeper;
+            Sweeper.setPosition(sweeper);
+//            manual = true;
+        }
+        rightTrigger2Pressed = gamepad2.right_trigger > 0.1;
     }
     private void ARM_PID_Control(){
+        if (!state.equals("floor")){
+            Lift_Power = 1;
+        }
         controller1.setPID(p1,i1,d1);
         arm1Pos = ARM1.getCurrentPosition();
         double pid1 = controller1.calculate(arm1Pos,(int)(target1*ticks_in_degree_1)); //PID calculation
@@ -316,7 +331,7 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
         Math.sqrt(Math.pow((x2*Math.sin(Math.toRadians(target1+target2))+L1*Math.sin(Math.toRadians(target1))),2)+Math.pow((x2*Math.cos(Math.toRadians(target1+target2))+L1*Math.cos(Math.toRadians(target1))),2))) * f1; // feedforward calculation, change when equation is derived
         double power1 = pid1 + ff1;
         //telemetry.addData("ff1",ff1);
-        ARM1.setPower(power1); //set the power
+        ARM1.setPower(power1*Lift_Power); //set the power
 
         controller2.setPID(p2,i2,d2);
         arm2Pos = ARM2.getCurrentPosition();
@@ -359,13 +374,13 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
             ARM2.setPower(-0.2);
         }
         if (gamepad2.a) { //prepare for hang
-            target1 = 111.830920056; //111.330920056
+            target1 = 115.3484; //111.830920056; //111.330920056
             target2 = 172;
 //            hanging = true;
             hookUp = true;
         }
         if (gamepad2.b) { //hang
-            target1 = 0; //might need to change this, doesn't make sense to lower it past 0.
+            target1 = -5; //might need to change this, doesn't make sense to lower it past 0.
             //ARM2 must be moved up manually.
 //            Claw_Angle.setPosition(0);
 //            Intake_Angle.setPosition(1);
@@ -400,6 +415,8 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
         if (gamepad1.a) {//floor
             target1 = floor;
             target2 = floor2;
+            Lift_Power = 0.25;
+            state = "floor";
         }
         if (gamepad1.b && gamepad1.left_bumper){
             target1 = wall;
@@ -456,7 +473,6 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
      * Describe this function...
      */
     private void Initialization() {
-        double Lift_Power;
 
         controller1 = new PIDController(p1, i1, d1);
         controller2 = new PIDController(p2, i2, d2);
@@ -490,13 +506,13 @@ public class TeleOp2425_V2Robot extends LinearOpMode {
         target2 = ARM2.getCurrentPosition()/ticks_in_degree_2;
         telemetry.addData("Claw",Claw.getPosition());
         telemetry.update();
-        Claw.scaleRange(0.45,0.9);
+        Claw.scaleRange(0.45,0.95);
         Claw_Angle.scaleRange(0.04, 0.7);
+//        Sweeper.scaleRange(0,1);
 
 
         Motor_Power = 0.5;
         Targeting_Angle = initialHeading;
-        Lift_Power = 0.3;
         // Initialize the IMU with non-default settings. To use this block,
         // plug one of the "new IMU.Parameters" blocks into the parameters socket.
         // Create a Parameters object for use with an IMU in a REV Robotics Control Hub or
